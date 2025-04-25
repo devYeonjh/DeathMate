@@ -28,7 +28,8 @@ void ADMEnemyFactory::Tick(float DeltaTime)
 	{
 		CurrentTime = 0;
 
-		ADMEnemyActor* Enemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, GetActorLocation(), GetActorRotation());
+		ADMEnemyActor* Enemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass[0], GetActorLocation(), GetActorRotation());
+		ADMEnemyActor* Enemy1 = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass[1], GetActorLocation(), GetActorRotation());
 		UE_LOG(LogTemp, Warning, TEXT("Enemy is Spawned!"));
 	}
 	else

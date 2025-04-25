@@ -27,7 +27,7 @@ public:
 	float DelayTime = 1.5f;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ADMEnemyActor> EnemyClass;
+	TArray<TSubclassOf<class ADMEnemyActor>> EnemyClass;
 
 private:
 	float CurrentTime = 0;
