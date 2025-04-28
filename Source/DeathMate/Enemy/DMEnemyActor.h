@@ -33,7 +33,8 @@ public:
 	int32 TraceRate = 80;
 
 	UPROPERTY(EditAnywhere)
-	float MoveSpeed = 1500.0f;
+	float MoveSpeed;
+	void SetMoveSpeed(float NewSpeed);
 
 	UFUNCTION()
 	void OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

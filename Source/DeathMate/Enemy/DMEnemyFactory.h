@@ -32,5 +32,7 @@ public:
 private:
 	float CurrentTime = 0;
 
+public:
+	void SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, float MoveSpeed);
 
 };

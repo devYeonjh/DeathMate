@@ -63,6 +63,11 @@ void ADMEnemyActor::Tick(float DeltaTime)
 	SetActorLocation(NewLocation); // 새로운 위치로 적을 실제로 이동시킴
 }
 
+void ADMEnemyActor::SetMoveSpeed(float NewSpeed)
+{
+	MoveSpeed = NewSpeed;
+}
+
 void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	/*AActor* IActor = Cast<AActor>(OtherActor);
