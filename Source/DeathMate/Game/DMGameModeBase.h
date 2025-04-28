@@ -19,7 +19,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Player")
-	TSubclassOf<class ADMPaperCharacter> DMPaperCharacterClass;
+	TSubclassOf<class ADMPaperCharacter> PaperCharacter1P;
+	UPROPERTY(EditAnywhere, Category = "Player")
+	TSubclassOf<class ADMPaperCharacter> PaperCharacter2P;
 
 	UPROPERTY(EditAnywhere, Category = "Player")
 	class APlayerStart* PlayerStart1P;
@@ -33,12 +35,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	// 태그를 이용해서 PlayerStart 찾는 함수
 	APlayerStart* FindPlayerStart(UWorld* World, const FName& TargetTag);
 
-	// 로컬 플레이어를 스폰하는 함수
 	void SpawnLocalPlayer(int32 PlayerIndex, APlayerStart* PlayerStart, UWorld* World);
 
-	// Possessed를 시키는 함수
 	class ADMPaperCharacter* SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex);
 };

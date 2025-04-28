@@ -23,7 +23,10 @@ protected:
 	class APawn* Player2P;
 
 	UPROPERTY(VisibleAnywhere, Category = "Input")
-	class UInputAction* IA_LMMove2P;
+	class UInputAction* IA_DMMove2P;
+
+	UPROPERTY(VisibleAnywhere, Category = "Input")
+	class UInputAction* IA_Flip2P;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -34,5 +37,6 @@ protected:
 
 private:
 	void OnInputMove2P(const FInputActionValue& Value);
+	void Flip(const FInputActionValue& Value);
 	
 };

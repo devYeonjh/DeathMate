@@ -7,11 +7,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 #include "Player/DMPlayerController.h"
+#include "UObject/ConstructorHelpers.h"
 
 
 ADMGameModeBase::ADMGameModeBase()
 {
-	
+	DefaultPawnClass = nullptr;
+	PlayerControllerClass = ADMPlayerController::StaticClass();
 }
 
 void ADMGameModeBase::BeginPlay()
@@ -27,7 +29,7 @@ void ADMGameModeBase::BeginPlay()
 	PlayerStart2P = FindPlayerStart(World, TargetTag2P);
 
 	SpawnLocalPlayer(SpawnedPlayerIndex++, PlayerStart1P, World);
-	SpawnLocalPlayer(SpawnedPlayerIndex++, PlayerStart2P, World);
+	SpawnLocalPlayer(SpawnedPlayerIndex, PlayerStart2P, World);
 
 }
 
@@ -65,7 +67,7 @@ void ADMGameModeBase::SpawnLocalPlayer(int32 PlayerIndex, APlayerStart* PlayerSt
 	}
 	else if (PlayerIndex == 1)
 	{
-		UGameInstance* GameInstance = GetGameInstance();
+		UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(World);
 		ensure(GameInstance);
 		FString Error;
 		ULocalPlayer* NewLocalPlayer = GameInstance->CreateLocalPlayer(-1, Error, true);
@@ -80,12 +82,31 @@ ADMPaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerCon
 {
 	if (!World || !PlayerController || !PlayerStart)
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("파라미터 중 유효하지 않은 인자가 있습니다."));
+		UE_LOG(LogTemp, Warning, TEXT("Invalis Parameters"));
 		return nullptr;
 	}
-	ADMPaperCharacter* PlayerPawn = World->SpawnActor<ADMPaperCharacter>(DMPaperCharacterClass, PlayerStart->GetActorLocation(), PlayerStart->GetActorRotation());
+	TSubclassOf<class ADMPaperCharacter> SpawnCharacter = nullptr;
+
+	if (PlayerIndex == 0)
+	{
+		SpawnCharacter = PaperCharacter1P;
+	}
+	else if (PlayerIndex == 1)
+	{
+		SpawnCharacter = PaperCharacter2P;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Player Index"));
+		return nullptr;
+	}
+
+	ADMPaperCharacter* PlayerPawn =
+		World->SpawnActor<ADMPaperCharacter>(SpawnCharacter,
+			PlayerStart->GetActorLocation(),
+			PlayerStart->GetActorRotation());
 	ensure(PlayerPawn);
+
 	PlayerPawn->SetPlayerIndex(PlayerIndex);
 	PlayerController->Possess(PlayerPawn);
 

@@ -12,13 +12,13 @@
 
 ADMPaperCharacter::ADMPaperCharacter()
 {
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMCObj(TEXT("/Game/DoHoon/Input/IMC_PlayerController.IMC_PlayerController"));
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMCObj(TEXT("/Game/Input/IMC_PlayerController.IMC_PlayerController"));
 	if (IMCObj.Succeeded())
 	{
 		IMC_DMPlayerInput = IMCObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> IAObj(TEXT("/Game/DoHoon/Input/Action/IA_Move.IA_Move"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> IAObj(TEXT("/Game/Input/Action/IA_Move.IA_Move"));
 	if (IAObj.Succeeded())
 	{
 		IA_DMMove1P = IAObj.Object;
@@ -76,6 +76,7 @@ void ADMPaperCharacter::OnInputMove(const FInputActionValue& Value)
 	if (ForwardDirection.SizeSquared() > 0.0f)
 	{
 		AddMovementInput(ForwardDirection.GetSafeNormal());
+		UE_LOG(LogTemp, Warning, TEXT("Player %d Move Direction: %s"), PlayerIndex, *ForwardDirection.ToString());
 	}
 }
 
