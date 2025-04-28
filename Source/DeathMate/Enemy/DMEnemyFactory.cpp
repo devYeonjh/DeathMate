@@ -47,7 +47,7 @@ void ADMEnemyFactory::Tick(float DeltaTime)
 
 void ADMEnemyFactory::SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, float MoveSpeed)
 {
-	if (!EnemyClassToSpawn)
+	if (EnemyClassToSpawn == nullptr)
 	{
 		return;
 	}
