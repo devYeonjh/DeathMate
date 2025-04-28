@@ -64,17 +64,6 @@ void ADMEnemyActor::Tick(float DeltaTime)
 	//FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * DeltaTime);
 	//SetActorLocation(NewLocation); // 새로운 위치로 적을 실제로 이동시킴
 
-	//float TraveledDistance = FVector::Dist(StartLocation, CurrentLocation);
-
-	//if (TraveledDistance >= MoveDistance)
-	//{
-	//	bMovingForward = !bMovingForward;
-	//	StartLocation = CurrentLocation; // 기준 위치 갱신
-	//}
-
-	//Direction = bMovingForward ? MoveDirection : -MoveDirection;
-	//FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * DeltaTime);
-	//SetActorLocation(NewLocation);
 	CurrentDeltaTime = DeltaTime;
 	Move();
 }
@@ -102,17 +91,4 @@ void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	//Destroy();
 }
-
-//void ADMEnemyActor::MoveInAir()
-//{
-//	// 날아다니는 몬스터의 이동 방식 처리
-//	FVector CurrentLocation = GetActorLocation();
-//	FVector NewLocation2 = CurrentLocation + FVector(0.0f, 0.0f, 1.0f); // Z축을 따라 상승
-//	SetActorLocation(NewLocation2); // 비행 시, 직접 위치 변경
-//}
-//
-//void ADMEnemyActor::MoveOnGround()
-//{
-//	
-//}
 

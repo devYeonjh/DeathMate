@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,10 +18,10 @@ protected:
 	virtual void Move() override;
 
 private:
-	float MoveDistance = 500.0f;
-	FVector MoveDirection = FVector(1, 0, 0); // ±‚∫ª X√‡ πÊ«‚
+	float MoveDistance = 500.0f; // ÏµúÎåÄ Ïù¥Îèô Í±∞Î¶¨
+	FVector MoveDirection = FVector(1, 0, 0); // Í∏∞Î≥∏ XÏ∂ï Î∞©Ìñ•
 
-	FVector Direction = FVector::ZeroVector; // ¿Ãµø πÊ«‚ ±‚∫ª∞™ 0, 0, 0
+	FVector Direction = FVector::ZeroVector; // Ïù¥Îèô Î∞©Ìñ• Í∏∞Î≥∏Í∞í 0, 0, 0
 	FVector StartLocation;
 	bool bMovingForward = true;
 	

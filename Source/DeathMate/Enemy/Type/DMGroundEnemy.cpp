@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Enemy/Type/DMGroundEnemy.h"
@@ -12,10 +12,16 @@ void ADMGroundEnemy::Move()
 	if (TraveledDistance >= MoveDistance)
 	{
 		bMovingForward = !bMovingForward;
-		StartLocation = CurrentLocation; // ±âÁØ À§Ä¡ °»½Å
+		StartLocation = CurrentLocation; // ê¸°ì¤€ ìœ„ì¹˜ ê°±ì‹ 
 	}
-
-	Direction = bMovingForward ? MoveDirection : -MoveDirection;
+	if (bMovingForward)
+	{
+		Direction = MoveDirection; // ì•ìœ¼ë¡œ ì´ë™
+	}
+	else
+	{
+		Direction = -MoveDirection; // ë’¤ë¡œ ì´ë™
+	}
 	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);
 	SetActorLocation(NewLocation);
 }

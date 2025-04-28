@@ -50,16 +50,6 @@ public:
 	UFUNCTION()
 	void OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-//public:
-//	UPROPERTY(EditAnywhere)
-//	EMovementType MovemetType;
-//
-//
-//	UPROPERTY(EditAnywhere)
-//	EMovementType MovementType = EMovementType::Ground;
-//	void MoveInAir();
-//	void MoveOnGround();
-
 
 private:
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
