@@ -11,13 +11,10 @@ void ADMBlinkingEnemy::BeginPlay()
 
 	StartLocation = GetActorLocation();
 
-	// 메시 컴포넌트에서 동적 머티리얼 생성
-	//UMeshComponent* MeshComp = FindComponentByClass<UMeshComponent>();
 	if (MeshComp)
 	{
 		DynMaterial = MeshComp->CreateAndSetMaterialInstanceDynamic(0); // 0번째 머티리얼 슬롯 사용
 	}
-
 
 }
 
@@ -46,16 +43,6 @@ void ADMBlinkingEnemy::Move()
 
 void ADMBlinkingEnemy::UpdateVisibility(float DeltaTime)
 {
-	//TimeSinceLastToggle += DeltaTime;
-
-	//if (TimeSinceLastToggle >= ToggleInterval)
-	//{
-	//	TimeSinceLastToggle = 0.0f;
-	//	bVisible = !bVisible;
-
-	//	SetActorHiddenInGame(!bVisible); // 렌더링 ON/OFF
-	//	SetActorEnableCollision(bVisible); // 충돌 ON/OFF
-	//}
 
 	TimeSinceLastToggle += DeltaTime;
 
@@ -64,18 +51,17 @@ void ADMBlinkingEnemy::UpdateVisibility(float DeltaTime)
 		TimeSinceLastToggle = 0.0f;
 		bVisible = !bVisible;
 
-		// 머티리얼 Opacity 조절
 		if (DynMaterial)
 		{
 			float NewOpacity = bVisible ? 1.0f : 0.0f;
 			DynMaterial->SetScalarParameterValue(TEXT("OpacityParam"), NewOpacity);
 		}
 
-		// 충돌 ON/OFF
-	/*	UMeshComponent* MeshComp = FindComponentByClass<UMeshComponent>();
+		// UMeshComponent* MeshComp = FindComponentByClass<UMeshComponent>();
 		if (MeshComp)
-		{*/
+		{
 			MeshComp->SetCollisionEnabled(bVisible ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
-		//}
+		}
 	}
+
 }
