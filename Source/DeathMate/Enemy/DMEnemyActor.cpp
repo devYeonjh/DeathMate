@@ -27,29 +27,30 @@ void ADMEnemyActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	int32 DrawResult = 10; //FMath::RandRange(1, 100);
-	if (DrawResult <= TraceRate)
-	{
-		TActorIterator<AActor> IActor(GetWorld());
+	
+	//int32 DrawResult = 10; //FMath::RandRange(1, 100);
+	//if (DrawResult <= TraceRate)
+	//{
+	//	TActorIterator<AActor> IActor(GetWorld());
 
-		for (IActor; IActor; ++IActor)
-		{
-			if (IActor->GetActorLabel().Contains("Cube"))
-			{
-				Direction = IActor->GetActorLocation() - GetActorLocation();
-				Direction.Normalize();
-			}
-		}
+	//	for (IActor; IActor; ++IActor)
+	//	{
+	//		if (IActor->GetActorLabel().Contains("Cube"))
+	//		{
+	//			Direction = IActor->GetActorLocation() - GetActorLocation();
+	//			Direction.Normalize();
+	//		}
+	//	}
 
-		if (Direction == FVector::ZeroVector)
-		{
-			Direction = GetActorForwardVector();
-		}	
-	}
-	else
-	{
-		Direction = GetActorForwardVector();
-	}
+	//	if (Direction == FVector::ZeroVector)
+	//	{
+	//		Direction = GetActorForwardVector();
+	//	}	
+	//}
+	//else
+	//{
+	//	Direction = GetActorForwardVector();
+	//}
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADMEnemyActor::OnEnemyOverlap);
 }
@@ -75,19 +76,33 @@ void ADMEnemyActor::SetMoveSpeed(float NewSpeed)
 
 void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*AActor* IActor = Cast<AActor>(OtherActor);
-	if (IActor != nullptr)
-	{
-		IActor->Destroy();
-	}
-	
-	AGameModeBase* CurrentGameMode = GetWorld()->GetAuthGameMode();
-	ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(CurrentGameMode);
-	
-	if (DMGameMode != nullptr)
-	{
 
-	}*/
+	if (OtherActor && OtherActor->ActorHasTag("PlayerAttack")) // 태그로 공격 여부 판별
+	{
+		AGameModeBase* CurrentGameMode = GetWorld()->GetAuthGameMode();
+		ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(CurrentGameMode);
+
+		if (DMGameMode != nullptr)
+		{
+
+		}
+		Destroy();
+	}
+
+
+	//AActor* IActor = Cast<AActor>(OtherActor);
+	//if (IActor != nullptr)
+	//{
+	//	//IActor->Destroy();
+	//}
+	//
+	//AGameModeBase* CurrentGameMode = GetWorld()->GetAuthGameMode();
+	//ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(CurrentGameMode);
+	//
+	//if (DMGameMode != nullptr)
+	//{
+
+	//}
 
 	//Destroy();
 }

@@ -6,6 +6,21 @@
 #include "GameFramework/Actor.h"
 #include "DMEnemyFactory.generated.h"
 
+USTRUCT(BlueprintType)
+struct FEnemySpawnData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ADMEnemyActor> EnemyClass;
+
+	UPROPERTY(EditAnywhere)
+	float DelayTime = 1.5f;
+
+	float CurrentTime = 0.0f;
+};
+
+
 UCLASS()
 class DEATHMATE_API ADMEnemyFactory : public AActor
 {
@@ -24,13 +39,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	float DelayTime = 1.5f;
+	
+	TArray<FEnemySpawnData> EnemySpawnList;
 
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class ADMEnemyActor>> EnemyClass;
-
-private:
-	float CurrentTime = 0;
 
 public:
 	void SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, float MoveSpeed);

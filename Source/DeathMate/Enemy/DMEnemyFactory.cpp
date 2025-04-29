@@ -25,24 +25,22 @@ void ADMEnemyFactory::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CurrentTime > DelayTime)
+	for (FEnemySpawnData& SpawnData : EnemySpawnList)
 	{
-		CurrentTime = 0;
+		SpawnData.CurrentTime += DeltaTime;
 
-		if (EnemyClass.Num() >=2)
+		if (SpawnData.CurrentTime >= SpawnData.DelayTime)
 		{
-			SpawnEnemy(EnemyClass[0], 500.0f);
-			SpawnEnemy(EnemyClass[1], 1000.0f);
-		}
+			SpawnData.CurrentTime = 0.0f;
 
-		// ADMEnemyActor* Enemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass[0], GetActorLocation(), GetActorRotation());
-		// ADMEnemyActor* Enemy1 = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass[1], GetActorLocation(), GetActorRotation());
-		UE_LOG(LogTemp, Warning, TEXT("Enemy is Spawned!"));
+			if (SpawnData.EnemyClass != nullptr)
+			{
+				float MoveSpeed = (SpawnData.DelayTime < 2.0f) ? 1000.0f : 500.0f;
+				SpawnEnemy(SpawnData.EnemyClass, MoveSpeed);
+			}
+		}
 	}
-	else
-	{
-		CurrentTime += DeltaTime;
-	}
+	
 }
 
 void ADMEnemyFactory::SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, float MoveSpeed)
