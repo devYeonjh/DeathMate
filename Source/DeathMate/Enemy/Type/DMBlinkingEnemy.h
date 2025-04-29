@@ -4,18 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Enemy/DMEnemyActor.h"
-#include "DMGroundEnemy.generated.h"
+#include "DMBlinkingEnemy.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEATHMATE_API ADMGroundEnemy : public ADMEnemyActor
+class DEATHMATE_API ADMBlinkingEnemy : public ADMEnemyActor
 {
 	GENERATED_BODY()
-
+	
 protected:
+	virtual void BeginPlay() override;
 	virtual void Move() override;
+	void UpdateVisibility(float DeltaTime);
 
 private:
 	float MoveDistance = 800.0f; // 최대 이동 거리
@@ -23,5 +25,11 @@ private:
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
 	FVector StartLocation;
 	bool bMovingForward = true;
-	
+
+	UMaterialInstanceDynamic* DynMaterial = nullptr;
+
+	float ToggleInterval = 1.5f;
+	float TimeSinceLastToggle = 0.0f;
+	bool bVisible = true;
 };
+
