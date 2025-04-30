@@ -25,6 +25,7 @@ protected:
 	class UInputMappingContext* IMC_DMPlayerInput;
 	class UInputAction* IA_DMMove1P;
 	class UInputAction* IA_Jump1P;
+	class UCharacterMovementComponent* MoveComp;
 
 private:
 	class UPaperFlipbookComponent* MySprite;
@@ -34,8 +35,6 @@ private:
 	class UPaperFlipbook* PF_Run;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
 	class UPaperFlipbook* PF_Jump;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Fall;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -52,9 +51,7 @@ protected:
 private:
 	void BindInputActions(class UEnhancedInputComponent* EnhancedInputComponent);
 
-	void OnInputMoveStarted(const FInputActionValue& Value);
 	void OnInputMoveTriggered(const FInputActionValue& Value);
-	void OnInputMoveCompleted(const FInputActionValue& Value);
 
 	void OnInputJumpStarted(const FInputActionValue& Value);
 	void OnInputJumpCompleted(const FInputActionValue& Value);
