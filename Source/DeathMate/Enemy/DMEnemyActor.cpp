@@ -60,13 +60,14 @@ void ADMEnemyActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//FVector CurrentLocation = GetActorLocation();
-
-	//FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * DeltaTime);
-	//SetActorLocation(NewLocation); // 새로운 위치로 적을 실제로 이동시킴
-
 	CurrentDeltaTime = DeltaTime;
 	Move();
+
+	LifeTimer += DeltaTime;
+	if (LifeTimer >= LifeTime)
+	{
+		Destroy();
+	}
 }
 
 void ADMEnemyActor::SetMoveSpeed(float NewSpeed)

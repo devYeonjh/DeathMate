@@ -47,6 +47,9 @@ public:
 	float MoveSpeed;
 	void SetMoveSpeed(float NewSpeed);
 
+	UPROPERTY(EditAnywhere, Category="Enemy")
+	float LifeTime = 10.0f;
+
 	UFUNCTION()
 	void OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -55,5 +58,7 @@ private:
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
 	FVector StartLocation;
 	bool bMovingForward = true;
+
+    float LifeTimer = 0.0f;
 
 };
