@@ -20,23 +20,25 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
-	class APawn* Player2P;
+	class ADMPaperCharacter* Player2P;
 
 	UPROPERTY(VisibleAnywhere, Category = "Input")
 	class UInputAction* IA_DMMove2P;
 
 	UPROPERTY(VisibleAnywhere, Category = "Input")
-	class UInputAction* IA_Flip2P;
+	class UInputAction* IA_Dash2P;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
-	void SetPlayer2P(class APawn* const NewPlayer2P);
+	void SetPlayer2P(class ADMPaperCharacter* const NewPlayer2P);
 
 protected:
 	virtual void SetupInputComponent() override;
 
 private:
-	void OnInputMove2P(const FInputActionValue& Value);
-	void Flip(const FInputActionValue& Value);
-	
+	void OnInputMoveStarted(const FInputActionValue& Value);
+	void OnInputMoveTriggered(const FInputActionValue& Value);
+	void OnInputMoveCompleted(const FInputActionValue& Value);
+
+	void OnInputDash(const FInputActionValue& Value);
 };

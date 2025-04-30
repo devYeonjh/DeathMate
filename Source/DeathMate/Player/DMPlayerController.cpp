@@ -2,30 +2,32 @@
 
 
 #include "Player/DMPlayerController.h"
+#include "Player/DMPaperCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "PaperFlipbookComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 ADMPlayerController::ADMPlayerController()
 {
-	static ConstructorHelpers::FObjectFinder<UInputAction> IAObj(TEXT("/Game/Input/Action/IA_Move2P.IA_Move2P"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> IAMoveObj(TEXT("/Game/Input/Action/IA_Move2P.IA_Move2P"));
 	
-	if (IAObj.Succeeded())
+	if (IAMoveObj.Succeeded())
 	{
-		IA_DMMove2P = IAObj.Object;
+		IA_DMMove2P = IAMoveObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> IAFlipObj(TEXT("/Game/Input/Action/IA_Flip2P.IA_Flip2P"));
-	if (IAFlipObj.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IADashObj(TEXT("/Game/Input/Action/IA_Dash.IA_Dash"));
+	if (IADashObj.Succeeded())
 	{
-		IA_Flip2P = IAFlipObj.Object;
+		IA_Dash2P = IADashObj.Object;
 	}
-
 
 }
 
-void ADMPlayerController::SetPlayer2P(APawn* const NewPlayer2P)
+void ADMPlayerController::SetPlayer2P(ADMPaperCharacter* const NewPlayer2P)
 {
 	ensure(NewPlayer2P);
 	Player2P = NewPlayer2P;
@@ -36,14 +38,18 @@ void ADMPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInputComponent && IA_DMMove2P && IA_Flip2P)
+	if (EnhancedInputComponent && IA_DMMove2P)
 	{
-		EnhancedInputComponent->BindAction(IA_DMMove2P, ETriggerEvent::Triggered, this, &ADMPlayerController::OnInputMove2P);
-		EnhancedInputComponent->BindAction(IA_Flip2P, ETriggerEvent::Triggered, this, &ADMPlayerController::Flip);
+		EnhancedInputComponent->BindAction(IA_DMMove2P, ETriggerEvent::Triggered, this, &ADMPlayerController::OnInputMoveTriggered);
 	}
 }
 
-void ADMPlayerController::OnInputMove2P(const FInputActionValue& Value)
+void ADMPlayerController::OnInputMoveStarted(const FInputActionValue& Value)
+{
+
+}
+
+void ADMPlayerController::OnInputMoveTriggered(const FInputActionValue& Value)
 {
 	if (Player2P)
 	{
@@ -57,27 +63,24 @@ void ADMPlayerController::OnInputMove2P(const FInputActionValue& Value)
 		{
 			Player2P->AddMovementInput(MoveDirection.GetSafeNormal());
 		}
+
+		float Yaw = (MoveDirection.X < 0.f) ? 0.f : 180.f;
+		Player2P->GetSprite()->SetRelativeRotation(FRotator(0.f, Yaw, 0.f));
 	}
 }
 
-void ADMPlayerController::Flip(const FInputActionValue& Value)
+void ADMPlayerController::OnInputMoveCompleted(const FInputActionValue& Value)
+{
+
+}
+
+void ADMPlayerController::OnInputDash(const FInputActionValue& Value)
 {
 	if (Player2P)
 	{
-		FVector2D MoveVector = Value.Get<FVector2D>(); // ex) (1,0) (-1, 0) (0, 1) (0, -1)
 
-		float MoveDir = MoveVector.X;
-
-		if (MoveDir > 0.0f)
-		{
-			Player2P->SetActorRelativeRotation(FRotator(0.0f, 0.0f, 0.0f), false);
-			UE_LOG(LogTemp, Warning, TEXT("Flip Player2P %f"), MoveDir);
-		}
-		else if (MoveDir < 0.0f)
-		{
-			Player2P->SetActorRelativeRotation(FRotator(0.0f, 0.0f, 180.0f), false);
-			UE_LOG(LogTemp, Warning, TEXT("Flip Player2P %f"), MoveDir);
-		}
 	}
 
 }
+
+

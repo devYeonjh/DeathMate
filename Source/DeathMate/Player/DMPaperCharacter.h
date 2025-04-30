@@ -24,9 +24,18 @@ protected:
 
 	class UInputMappingContext* IMC_DMPlayerInput;
 	class UInputAction* IA_DMMove1P;
+	class UInputAction* IA_Jump1P;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	class UFloatingPawnMovement* PawnMovement;
+private:
+	class UPaperFlipbookComponent* MySprite;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
+	class UPaperFlipbook* PF_Idle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
+	class UPaperFlipbook* PF_Run;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
+	class UPaperFlipbook* PF_Jump;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
+	class UPaperFlipbook* PF_Fall;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -36,17 +45,19 @@ public:
 	FORCEINLINE void SetPlayerIndex(int32 NewIndex) { PlayerIndex = NewIndex; }
 
 protected:
-
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void Tick(float DeltaTime) override;
 
 private:
 	void BindInputActions(class UEnhancedInputComponent* EnhancedInputComponent);
 
-	void OnInputMove(const FInputActionValue& Value);
+	void OnInputMoveStarted(const FInputActionValue& Value);
+	void OnInputMoveTriggered(const FInputActionValue& Value);
+	void OnInputMoveCompleted(const FInputActionValue& Value);
 
+	void OnInputJumpStarted(const FInputActionValue& Value);
+	void OnInputJumpCompleted(const FInputActionValue& Value);
 
 	void HandlePlayerSpecificPossession();
-
-	
 };

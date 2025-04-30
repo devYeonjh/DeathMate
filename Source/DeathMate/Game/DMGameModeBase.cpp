@@ -3,10 +3,10 @@
 
 #include "Game/DMGameModeBase.h"
 #include "Player/DMPaperCharacter.h"
+#include "Player/DMPlayerController.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
-#include "Player/DMPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 
@@ -82,18 +82,18 @@ ADMPaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerCon
 {
 	if (!World || !PlayerController || !PlayerStart)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalis Parameters"));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Parameters"));
 		return nullptr;
 	}
 	TSubclassOf<class ADMPaperCharacter> SpawnCharacter = nullptr;
 
 	if (PlayerIndex == 0)
 	{
-		SpawnCharacter = PaperCharacter1P;
+		SpawnCharacter = PlayerCharacter1P;
 	}
 	else if (PlayerIndex == 1)
 	{
-		SpawnCharacter = PaperCharacter2P;
+		SpawnCharacter = PlayerCharacter2P;
 	}
 	else
 	{

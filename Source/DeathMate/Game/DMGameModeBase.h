@@ -19,9 +19,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Player")
-	TSubclassOf<class ADMPaperCharacter> PaperCharacter1P;
+	TSubclassOf<class ADMPaperCharacter> PlayerCharacter1P;
 	UPROPERTY(EditAnywhere, Category = "Player")
-	TSubclassOf<class ADMPaperCharacter> PaperCharacter2P;
+	TSubclassOf<class ADMPaperCharacter> PlayerCharacter2P;
 
 	UPROPERTY(EditAnywhere, Category = "Player")
 	class APlayerStart* PlayerStart1P;
