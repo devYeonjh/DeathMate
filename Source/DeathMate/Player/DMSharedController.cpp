@@ -73,7 +73,7 @@ void ADMSharedController::OnInputMoveTriggered(const FInputActionValue& Value)
 		{
 			Player2P->AddMovementInput(MoveDirection.GetSafeNormal());
 		}
-
+ 
 		float Yaw = (MoveDirection.X < 0.f) ? 0.f : 180.f;
 		Player2P->GetSprite()->SetRelativeRotation(FRotator(0.f, Yaw, 0.f));
 	}

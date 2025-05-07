@@ -34,8 +34,6 @@ private:
 	class UPaperFlipbook* PF_Run;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
 	class UPaperFlipbook* PF_Jump;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Fall;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -47,12 +45,10 @@ public:
 protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void Tick(float DeltaTime) override;
 
 private:
 	void BindInputActions(class UEnhancedInputComponent* EnhancedInputComponent);
 
-	void OnInputMoveStarted(const FInputActionValue& Value);
 	void OnInputMoveTriggered(const FInputActionValue& Value);
 	void OnInputMoveCompleted(const FInputActionValue& Value);
 

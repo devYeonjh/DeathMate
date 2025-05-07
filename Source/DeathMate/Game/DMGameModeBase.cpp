@@ -3,7 +3,7 @@
 
 #include "Game/DMGameModeBase.h"
 #include "Player/DMPaperCharacter.h"
-#include "Player/DMPlayerController.h"
+#include "Player/DMSharedController.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
@@ -13,7 +13,7 @@
 ADMGameModeBase::ADMGameModeBase()
 {
 	DefaultPawnClass = nullptr;
-	PlayerControllerClass = ADMPlayerController::StaticClass();
+	PlayerControllerClass = ADMSharedController::StaticClass();
 }
 
 void ADMGameModeBase::BeginPlay()
