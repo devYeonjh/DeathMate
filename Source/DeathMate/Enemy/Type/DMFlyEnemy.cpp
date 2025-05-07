@@ -27,6 +27,6 @@
 
 		FVector NewLocation = EnemyLocation + Velocity;
 
-		SetActorLocation(NewLocation);
+		SetActorLocation2D(NewLocation);
 
 	}

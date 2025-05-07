@@ -8,6 +8,8 @@
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/StaticMeshActor.h"
+#include "Player/DMPaperCharacter.h"
+#include "PaperFlipbookComponent.h"
 
 // Sets default values
 ADMEnemyActor::ADMEnemyActor()
@@ -15,11 +17,7 @@ ADMEnemyActor::ADMEnemyActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision")); // 충돌 박스 생성
-	SetRootComponent(BoxComp); // 충돌 박스를 최상위 객체로
 	BoxComp->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f)); // 충돌 박스의 크기 설정
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component")); // 이 액터가 생성될 때 함께 따라오는 기본 구성 요소를 만드는 함수
-	MeshComp->SetupAttachment(BoxComp); // MeshComp를 BoxComp에 붙인다 부모-자식 관계를 설정
 
 	BoxComp->SetCollisionProfileName(TEXT("Enemy")); // 충돌 프로필 설정
 }
@@ -28,33 +26,22 @@ ADMEnemyActor::ADMEnemyActor()
 void ADMEnemyActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
-	//int32 DrawResult = 10; //FMath::RandRange(1, 100);
-	//if (DrawResult <= TraceRate)
-	//{
-	//	TActorIterator<AActor> IActor(GetWorld());
-
-	//	for (IActor; IActor; ++IActor)
-	//	{
-	//		if (IActor->GetActorLabel().Contains("Cube"))
-	//		{
-	//			Direction = IActor->GetActorLocation() - GetActorLocation();
-	//			Direction.Normalize();
-	//		}
-	//	}
-
-	//	if (Direction == FVector::ZeroVector)
-	//	{
-	//		Direction = GetActorForwardVector();
-	//	}	
-	//}
-	//else
-	//{
-	//	Direction = GetActorForwardVector();
-	//}
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADMEnemyActor::OnEnemyOverlap);
+}
+
+void ADMEnemyActor::SetActorLocation2D(FVector Pos)
+{
+	float CurX = GetActorLocation().X;
+
+	FVector Dir = CurX < Pos.X ? FVector(1.0f, 1.0f, 1.0f) : FVector(-1.0f, 1.0f, 1.0f);
+
+	if (FlipbookComp)
+	{
+		FlipbookComp->SetRelativeScale3D(Dir);
+	}
+
+	SetActorLocation(Pos);
 }
 
 // Called every frame
@@ -80,33 +67,32 @@ void ADMEnemyActor::SetMoveSpeed(float NewSpeed)
 void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	if (OtherActor && OtherActor->ActorHasTag("PlayerAttack")) // 태그로 공격 여부 판별
+	if (OtherActor) // 태그로 공격 여부 판별
 	{
-		AGameModeBase* CurrentGameMode = GetWorld()->GetAuthGameMode();
+		ADMPaperCharacter* Player1P = Cast<ADMPaperCharacter>(OtherActor);
+		ensure(Player1P);
+
+		//체크포인트로 되돌아가는 함수
+		UWorld* world = GetWorld();
+		ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(UGameplayStatics::GetGameMode(world));
+		//DMGameMode->SetPlayerCheckPoint();
+
+
+		/*AGameModeBase* CurrentGameMode = GetWorld()->GetAuthGameMode();
 		ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(CurrentGameMode);
 
 		if (DMGameMode != nullptr)
 		{
 
 		}
-		Destroy();
+		Destroy();*/
 	}
+}
 
+void ADMEnemyActor::Death()
+{
+	//죽엇을때 이펙트 or 파티클 추가
 
-	//AActor* IActor = Cast<AActor>(OtherActor);
-	//if (IActor != nullptr)
-	//{
-	//	//IActor->Destroy();
-	//}
-	//
-	//AGameModeBase* CurrentGameMode = GetWorld()->GetAuthGameMode();
-	//ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(CurrentGameMode);
-	//
-	//if (DMGameMode != nullptr)
-	//{
-
-	//}
-
-	//Destroy();
+	Destroy();
 }
 

@@ -11,10 +11,10 @@ void ADMBlinkingEnemy::BeginPlay()
 
 	StartLocation = GetActorLocation();
 
-	if (MeshComp)
-	{
-		DynMaterial = MeshComp->CreateAndSetMaterialInstanceDynamic(0); // 0번째 머티리얼 슬롯 사용
-	}
+	//if (MeshComp)
+	//{
+	//	DynMaterial = MeshComp->CreateAndSetMaterialInstanceDynamic(0); // 0번째 머티리얼 슬롯 사용
+	//}
 
 }
 
@@ -37,7 +37,7 @@ void ADMBlinkingEnemy::Move()
 		Direction = -MoveDirection;
 	}
 	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);
-	SetActorLocation(NewLocation);
+	SetActorLocation2D(NewLocation);
 	UpdateVisibility(CurrentDeltaTime);
 }
 
@@ -58,10 +58,10 @@ void ADMBlinkingEnemy::UpdateVisibility(float DeltaTime)
 		}
 
 		// UMeshComponent* MeshComp = FindComponentByClass<UMeshComponent>();
-		if (MeshComp)
+		/*if (MeshComp)
 		{
 			MeshComp->SetCollisionEnabled(bVisible ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
-		}
+		}*/
 	}
 
 }
