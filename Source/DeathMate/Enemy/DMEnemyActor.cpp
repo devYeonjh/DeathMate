@@ -20,6 +20,8 @@ ADMEnemyActor::ADMEnemyActor()
 	BoxComp->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f)); // 충돌 박스의 크기 설정
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component")); // 이 액터가 생성될 때 함께 따라오는 기본 구성 요소를 만드는 함수
 	MeshComp->SetupAttachment(BoxComp); // MeshComp를 BoxComp에 붙인다 부모-자식 관계를 설정
+
+	BoxComp->SetCollisionProfileName(TEXT("Enemy")); // 충돌 프로필 설정
 }
 
 // Called when the game starts or when spawned
