@@ -73,6 +73,7 @@ void ADMPaperCharacter::BindInputActions(UEnhancedInputComponent* EnhancedInputC
 	if (PlayerIndex == 0)
 	{
 		EnhancedInputComponent->BindAction(IA_DMMove1P, ETriggerEvent::Triggered, this, &ADMPaperCharacter::OnInputMoveTriggered);
+		EnhancedInputComponent->BindAction(IA_DMMove1P, ETriggerEvent::Completed, this, &ADMPaperCharacter::OnInputMoveCompleted);
 
 		EnhancedInputComponent->BindAction(IA_Jump1P, ETriggerEvent::Started, this, &ADMPaperCharacter::OnInputJumpStarted);
 		EnhancedInputComponent->BindAction(IA_Jump1P, ETriggerEvent::Completed, this, &ADMPaperCharacter::OnInputJumpCompleted);
@@ -84,7 +85,7 @@ void ADMPaperCharacter::OnInputMoveTriggered(const FInputActionValue& Value)
 {
 	float MoveDirection = Value.Get<float>();
 
-	if (PF_Run && GetMovementComponent()->IsMovingOnGround() && MySprite->GetFlipbook() != PF_Run)
+	if (PF_Run && GetMovementComponent()->IsMovingOnGround())
 	{
 		MySprite->SetFlipbook(PF_Run);
 		MySprite->Play();
@@ -101,7 +102,7 @@ void ADMPaperCharacter::OnInputMoveTriggered(const FInputActionValue& Value)
 
 void ADMPaperCharacter::OnInputMoveCompleted(const FInputActionValue& Value)
 {
-	if (PF_Idle && MySprite->GetFlipbook() != PF_Idle)
+	if (PF_Idle)
 	{
 		MySprite->SetFlipbook(PF_Idle);
 		MySprite->Play();
@@ -111,6 +112,11 @@ void ADMPaperCharacter::OnInputMoveCompleted(const FInputActionValue& Value)
 void ADMPaperCharacter::OnInputJumpStarted(const FInputActionValue& Value)
 {
 	Jump();
+	if (PF_Jump && MySprite->GetFlipbook() != PF_Jump)
+	{
+		MySprite->SetFlipbook(PF_Jump);
+		MySprite->Play();
+	}
 }
 
 void ADMPaperCharacter::OnInputJumpCompleted(const FInputActionValue& Value)
