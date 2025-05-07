@@ -66,68 +66,25 @@ void ADMPaperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	HandlePlayerSpecificPossession();
 }
 
-void ADMPaperCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	if (MySprite)
-	{
-		if (GetCharacterMovement()->IsMovingOnGround())
-		{
-			if (PF_Idle && MySprite->GetFlipbook() != PF_Run && MySprite->GetFlipbook() != PF_Idle)
-			{
-				MySprite->SetFlipbook(PF_Idle);
-				MySprite->Play();
-			}
-		}
-		else
-		{
-			if (GetVelocity().Z < 0.0f)
-			{
-				if (PF_Fall && MySprite->GetFlipbook() != PF_Fall)
-				{
-					MySprite->SetFlipbook(PF_Fall);
-					MySprite->Play();
-				}
-			}
-			else
-			{
-				if (PF_Jump && MySprite->GetFlipbook() != PF_Jump)
-				{
-					MySprite->SetFlipbook(PF_Jump);
-					MySprite->Play();
-				}
-			}
-		}
-	}
-}
+
 
 void ADMPaperCharacter::BindInputActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
 	if (PlayerIndex == 0)
 	{
-		EnhancedInputComponent->BindAction(IA_DMMove1P, ETriggerEvent::Started, this, &ADMPaperCharacter::OnInputMoveStarted);
 		EnhancedInputComponent->BindAction(IA_DMMove1P, ETriggerEvent::Triggered, this, &ADMPaperCharacter::OnInputMoveTriggered);
-		EnhancedInputComponent->BindAction(IA_DMMove1P, ETriggerEvent::Completed, this, &ADMPaperCharacter::OnInputMoveCompleted);
 
 		EnhancedInputComponent->BindAction(IA_Jump1P, ETriggerEvent::Started, this, &ADMPaperCharacter::OnInputJumpStarted);
 		EnhancedInputComponent->BindAction(IA_Jump1P, ETriggerEvent::Completed, this, &ADMPaperCharacter::OnInputJumpCompleted);
 	}
 }
 
-void ADMPaperCharacter::OnInputMoveStarted(const FInputActionValue& Value)
-{
-	if (PF_Run && MySprite->GetFlipbook() != PF_Run)
-	{
-		MySprite->SetFlipbook(PF_Run);
-		MySprite->Play();
-	}
-}
 
 void ADMPaperCharacter::OnInputMoveTriggered(const FInputActionValue& Value)
 {
 	float MoveDirection = Value.Get<float>();
 
-	if (PF_Run && MySprite->GetFlipbook() != PF_Run)
+	if (PF_Run && GetMovementComponent()->IsMovingOnGround() && MySprite->GetFlipbook() != PF_Run)
 	{
 		MySprite->SetFlipbook(PF_Run);
 		MySprite->Play();
