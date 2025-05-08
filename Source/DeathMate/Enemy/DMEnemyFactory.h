@@ -16,10 +16,9 @@ struct FEnemySpawnData
 
 	UPROPERTY(EditAnywhere)
 	float DelayTime = 1.5f;
-	
+
 	float CurrentTime = 0.0f;
 };
-
 
 UCLASS()
 class DEATHMATE_API ADMEnemyFactory : public AActor

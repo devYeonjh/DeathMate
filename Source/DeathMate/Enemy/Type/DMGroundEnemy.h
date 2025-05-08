@@ -18,10 +18,10 @@ protected:
 	virtual void Move() override;
 
 private:
-	float MoveDistance = 800.0f; // 최대 이동 거리
+	//float MoveDistance = 800.0f; // 최대 이동 거리
 	FVector MoveDirection = FVector(1, 0, 0); // 기본 X축 방향
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
-	FVector StartLocation;
+	//FVector StartLocation;
 	bool bMovingForward = true;
 	
 };

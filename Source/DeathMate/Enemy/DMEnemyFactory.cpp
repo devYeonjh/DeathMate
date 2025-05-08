@@ -56,7 +56,8 @@ void ADMEnemyFactory::SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, f
 	if (SpawndEnemy)
 	{
 		SpawndEnemy->SetMoveSpeed(MoveSpeed);
-	}
+
+	};
 
 }
 
