@@ -17,7 +17,12 @@ struct FEnemySpawnData
 	UPROPERTY(EditAnywhere)
 	float DelayTime = 1.5f;
 
+	UPROPERTY(EditAnywhere)
+	float MoveDistance = 800.0f;
+
 	float CurrentTime = 0.0f;
+
+
 };
 
 UCLASS()
