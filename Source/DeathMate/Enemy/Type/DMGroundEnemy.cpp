@@ -24,14 +24,16 @@ void ADMGroundEnemy::Move()
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	bool bOnGround = GetWorld()->LineTraceSingleByChannel(FloorHit, Start, End, ECC_Visibility, Params);
+	bool bOnGround = GetWorld()->LineTraceSingleByChannel(FloorHit, Start, End, ECC_GameTraceChannel2, Params);
 
 	// 벽 충돌 확인용 라인 트레이스(전방 장애물)
 	FVector WallCheckStart = CurrentLocation;
 	FVector WallCheckEnd = CurrentLocation + Direction * 20.0f;
 
 	FHitResult WallHit;
-	bool bHitWall = GetWorld()->LineTraceSingleByChannel(WallHit, WallCheckStart, WallCheckEnd, ECC_Visibility, Params);
+	// ECollisionChannel TraceChannel 이 파라미터에 ECC_GameTraceChannel2[Enemy]
+	// Enemy의 Objecy Type인 레이져가 발사가 될 것이다.
+	bool bHitWall = GetWorld()->LineTraceSingleByChannel(WallHit, WallCheckStart, WallCheckEnd, ECC_GameTraceChannel2, Params);
 
 #if (WITH_EDITOR)
 	{
@@ -52,21 +54,4 @@ void ADMGroundEnemy::Move()
 
 	UE_LOG(LogTemp, Warning, TEXT("MoveSpeed: %f, Direction: %s"), MoveSpeed, *Direction.ToString());
 
-	//float TraveledDistance = FVector::Dist(StartLocation, CurrentLocation);
-
-	//if (TraveledDistance >= MoveDistance)
-	//{
-	//	bMovingForward = !bMovingForward;
-	//	StartLocation = CurrentLocation; // 기준 위치 갱신
-	//}
-	//if (bMovingForward)
-	//{
-	//	Direction = MoveDirection; // 앞으로 이동
-	//}
-	//else
-	//{
-	//	Direction = -MoveDirection; // 뒤로 이동
-	//}
-	//FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);
-	//SetActorLocation2D(NewLocation);
 }
