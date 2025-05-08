@@ -14,6 +14,7 @@ ADMGameModeBase::ADMGameModeBase()
 {
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = ADMSharedController::StaticClass();
+	SpectatorClass = nullptr;
 }
 
 void ADMGameModeBase::BeginPlay()

@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "InputMappingContext.h"
+#include "InputAction.h"
+#include "PaperFlipbook.h"
 #include "DMInputComponent.generated.h"
 
 
@@ -15,34 +18,33 @@ class DEATHMATE_API UDMInputComponent : public UActorComponent
 public:	
 	UDMInputComponent();
 
-private:
-	//========================Input Action========================
-	//할당된 IA가 없을 시 Action binding을 하지 않음
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction", meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* IMC_PlayerInput;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* IA_Move;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* IA_Jump;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* IA_Dash;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* IA_Attack;
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputComponent", meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* IMC_PlayerInput;
+
+	// Player 1
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputAction* IA_Move1P;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputAction* IA_Jump1P;
+	
+	// Player 2
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputAction* IA_Move2P;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    UInputAction* IA_Dash2P;
+
+
+	void InitializeInput(class UEnhancedInputComponent* EIC, int32 PlayerIndex);
 
 private:
-	//==========================Flipbook==========================
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Idle;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Run;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Jump;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Fall;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Dash;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Attack;
+    void OnMove1P(const FInputActionInstance& Instance);
+    void OnStopMove1P(const FInputActionInstance& Instance);
+    void OnJump1P(const FInputActionInstance& Instance);
+    void OnStopJump1P(const FInputActionInstance& Instance);
+    
+    void OnMove2P(const FInputActionInstance& Instance);
+    void OnDash2P(const FInputActionInstance& Instance);
 
 		
 };
