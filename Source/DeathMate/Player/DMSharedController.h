@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
+#include "UI/PauseMenuWidget.h"
 #include "DMSharedController.generated.h"
 
+class UPauseMenuWidget;
 /**
  * 
  */
@@ -17,7 +19,13 @@ class DEATHMATE_API ADMSharedController : public APlayerController
 
 public:
 	ADMSharedController();
+	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UPauseMenuWidget> PauseMenuClass;
+
+	UPROPERTY()
+	UPauseMenuWidget* PauseMenuInstance = nullptr;
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	class ADMPaperCharacter* Player2P;
@@ -32,7 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void SetPlayer2P(class ADMPaperCharacter* const NewPlayer2P);
 
-protected:
+public:
 	virtual void SetupInputComponent() override;
 
 private:
@@ -45,7 +53,8 @@ private:
 	void OnInputMoveTriggered(const FInputActionValue& Value);
 
 	void OnInputDash(const FInputActionValue& Value);
-
+	UFUNCTION()
+	void HandlePause();
 
 	
 };

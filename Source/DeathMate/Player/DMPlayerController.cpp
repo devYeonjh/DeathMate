@@ -8,8 +8,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
-
 ADMPlayerController::ADMPlayerController()
 {
 	static ConstructorHelpers::FObjectFinder<UInputAction> IAMoveObj(TEXT("/Game/Input/Action/IA_Move2P.IA_Move2P"));
@@ -82,5 +80,3 @@ void ADMPlayerController::OnInputDash(const FInputActionValue& Value)
 	}
 
 }
-
-

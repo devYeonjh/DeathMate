@@ -17,7 +17,6 @@ class DEATHMATE_API ADMPlayerController : public APlayerController
 
 public:
 	ADMPlayerController();
-
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	class ADMPaperCharacter* Player2P;
