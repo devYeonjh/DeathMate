@@ -14,21 +14,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 
-void ADMSharedController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (PauseMenuClass)
-	{
-		PauseMenuInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
-		if (PauseMenuInstance)
-		{
-			PauseMenuInstance->AddToViewport();
-
-			PauseMenuInstance->ResumeGame();
-		}
-	}
-}
 ADMSharedController::ADMSharedController()
 {
 	static ConstructorHelpers::FObjectFinder<UInputAction> IAMoveObj(TEXT("/Game/Input/Action/IA_Move2P.IA_Move2P"));
@@ -56,22 +41,35 @@ ADMSharedController::ADMSharedController()
 		PF_Dash = PFIdleObj.Object;
 	}
 
+
+	static ConstructorHelpers::FClassFinder<UPauseMenuWidget> PauseBP(TEXT("/Game/UI/WB_PauseMenu.WB_PauseMenu_C"));
+	if (PauseBP.Succeeded())
+	{
+		PauseMenuClass = PauseBP.Class;
+	}
+
 }
 
 void ADMSharedController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	if (PC && PC->GetPawn())
 	{
 		MyCam = PC->GetPawn()->FindComponentByClass<UCameraComponent>();
 		UE_LOG(LogTemp, Warning, TEXT("MyCam : %s"), *MyCam->GetName());
 	}
-	static ConstructorHelpers::FClassFinder<UPauseMenuWidget> PauseBP(TEXT("/Game/UI/WB_PauseMenu.WB_PauseMenu_C"));
-	if (PauseBP.Succeeded())
+
+	if (PauseMenuClass)
 	{
-		PauseMenuClass = PauseBP.Class;
+		PauseMenuInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
+		if (PauseMenuInstance)
+		{
+			PauseMenuInstance->AddToViewport();
+
+			PauseMenuInstance->ResumeGame();
+		}
 	}
 }
 

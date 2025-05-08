@@ -19,7 +19,6 @@ class DEATHMATE_API ADMSharedController : public APlayerController
 
 public:
 	ADMSharedController();
-	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPauseMenuWidget> PauseMenuClass;
