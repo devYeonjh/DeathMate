@@ -27,7 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Player")
 	class APlayerStart* PlayerStart1P;
 	UPROPERTY(EditAnywhere, Category = "Player")
-	class APlayerStart* PlayerStart2P;
+	class APlayerStart* PlayerStart2P;	
 
 private:
 	int32 SpawnedPlayerIndex = 0;
@@ -41,5 +41,18 @@ private:
 	void SpawnLocalPlayer(int32 PlayerIndex, APlayerStart* PlayerStart, UWorld* World);
 
 	class ADMPaperCharacter* SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex);
+
+private:
+	FVector Checkpoint;
+	class ADMPaperCharacter* Player1;
+	class ADMPaperCharacter* Player2;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Checkpoint")
+	void SetCheckpoint(const FVector& Pos);
+
+	UFUNCTION(BlueprintCallable, Category = "Checkpoint")
+	void RespawnAtCheckpoint();
+
 
 };
