@@ -23,5 +23,5 @@ void ADMGroundEnemy::Move()
 		Direction = -MoveDirection; // 뒤로 이동
 	}
 	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);
-	SetActorLocation(NewLocation);
+	SetActorLocation2D(NewLocation);
 }
