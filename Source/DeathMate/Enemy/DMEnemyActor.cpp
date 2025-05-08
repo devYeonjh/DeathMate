@@ -67,7 +67,7 @@ void ADMEnemyActor::SetMoveSpeed(float NewSpeed)
 void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	if (OtherActor) // 태그로 공격 여부 판별
+	if (OtherActor)
 	{
 		ADMPaperCharacter* Player1P = Cast<ADMPaperCharacter>(OtherActor);
 		ensure(Player1P);
@@ -75,17 +75,6 @@ void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		//체크포인트로 되돌아가는 함수
 		UWorld* world = GetWorld();
 		ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(UGameplayStatics::GetGameMode(world));
-		//DMGameMode->SetPlayerCheckPoint();
-
-
-		/*AGameModeBase* CurrentGameMode = GetWorld()->GetAuthGameMode();
-		ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(CurrentGameMode);
-
-		if (DMGameMode != nullptr)
-		{
-
-		}
-		Destroy();*/
 	}
 }
 
