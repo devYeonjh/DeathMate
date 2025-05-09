@@ -9,7 +9,7 @@
 
 	void ADMFlyEnemy::Move()
 	{
-		
+		// 플레이어 위치 가져오기
 		APawn* PlayerCharacter = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 		if (PlayerCharacter == nullptr)
 		{
@@ -19,14 +19,23 @@
 		FVector PlayerLocation = PlayerCharacter->GetActorLocation();
 		FVector EnemyLocation = GetActorLocation();
 
-		FVector DirectionToPlayer = PlayerLocation - EnemyLocation;
-		DirectionToPlayer.Z += 100.0f;
-		DirectionToPlayer.Normalize();
+		// 거리 계산
+		float DistanceToPlayer = FVector::Dist2D(PlayerLocation, EnemyLocation);
 
-		FVector Velocity = DirectionToPlayer * MoveSpeed * GetWorld()->GetDeltaSeconds();
+		// 감지 범위 내에 있는 경우에만 추적
+		if (DistanceToPlayer <= DetectionRange)
+		{
+			FVector DirectionToPlayer = PlayerLocation - EnemyLocation;
+			DirectionToPlayer.Z += 50.0f;
+			DirectionToPlayer.Normalize();
 
-		FVector NewLocation = EnemyLocation + Velocity;
+			FVector Velocity = DirectionToPlayer * MoveSpeed * GetWorld()->GetDeltaSeconds();
 
-		SetActorLocation2D(NewLocation);
+			FVector NewLocation = EnemyLocation + Velocity;
 
+			SetActorLocation2D(NewLocation);
+		}
+		// 플레이어가 범위 밖에 있는 경우
+		// 예: 대기 상태 또는 Idle 애니메이션 재생 등
+		UE_LOG(LogTemp, Warning, TEXT("Player Out of Range"));
 	}
