@@ -32,7 +32,7 @@ void ADMGroundEnemy::Move()
 
 	FHitResult WallHit;
 	// ECollisionChannel TraceChannel 이 파라미터에 ECC_GameTraceChannel2[Enemy]
-	// Enemy의 Objecy Type인 레이져가 발사가 될 것이다.
+	// Enemy의 Object Type인 레이져가 발사가 될 것이다.
 	bool bHitWall = GetWorld()->LineTraceSingleByChannel(WallHit, WallCheckStart, WallCheckEnd, ECC_GameTraceChannel2, Params);
 
 #if (WITH_EDITOR)
