@@ -8,9 +8,26 @@
 #include "EnhancedInputSubsystems.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
+#include "Game/DMGameModeBase.h"
+#include "UI/PauseMenuWidget.h"  
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+void ADMSharedController::BeginPlay()
+{
+	Super::BeginPlay();
 
+	if (PauseMenuClass)
+	{
+		PauseMenuInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
+		if (PauseMenuInstance)
+		{
+			PauseMenuInstance->AddToViewport();
+
+			PauseMenuInstance->ResumeGame();
+		}
+	}
+}
 ADMSharedController::ADMSharedController()
 {
 	static ConstructorHelpers::FObjectFinder<UInputAction> IAMoveObj(TEXT("/Game/Input/Action/IA_Move2P.IA_Move2P"));
@@ -37,6 +54,11 @@ ADMSharedController::ADMSharedController()
 	{
 		PF_Dash = PFIdleObj.Object;
 	}
+	static ConstructorHelpers::FClassFinder<UPauseMenuWidget> PauseBP(TEXT("/Game/UI/WB_PauseMenu.WB_PauseMenu_C"));
+	if (PauseBP.Succeeded())
+	{
+		PauseMenuClass = PauseBP.Class;
+	}
 }
 
 void ADMSharedController::SetPlayer2P(ADMPaperCharacter* const NewPlayer2P)
@@ -55,6 +77,7 @@ void ADMSharedController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(IA_DMMove2P, ETriggerEvent::Triggered, this, &ADMSharedController::OnInputMoveTriggered);
 		EnhancedInputComponent->BindAction(IA_Dash2P, ETriggerEvent::Completed, this, &ADMSharedController::OnInputDash);
 	}
+	InputComponent->BindAction("Pause", IE_Pressed, this, &ADMSharedController::HandlePause);
 }
 
 
@@ -91,4 +114,15 @@ void ADMSharedController::OnInputDash(const FInputActionValue& Value)
 		UE_LOG(LogTemp, Warning, TEXT("Dash"));
 	}
 
+}
+
+void ADMSharedController::HandlePause()
+{
+	if (!PauseMenuInstance)
+		return;
+
+	if (!UGameplayStatics::IsGamePaused(this))
+		PauseMenuInstance->ShowPauseMenu();
+	else
+		PauseMenuInstance->ResumeGame();
 }
