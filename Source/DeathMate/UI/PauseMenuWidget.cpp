@@ -1,6 +1,7 @@
 ﻿#include "PauseMenuWidget.h"
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
+#include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 
 void UPauseMenuWidget::NativeConstruct()
@@ -21,6 +22,7 @@ void UPauseMenuWidget::ShowPauseMenu()
 {
     bPaused = true;
     PausePanel->SetVisibility(ESlateVisibility::Visible);
+    PauseBackgroud->SetVisibility(ESlateVisibility::Visible);
 
     if (auto* PC = GetOwningPlayer< APlayerController >())
     {
@@ -36,6 +38,7 @@ void UPauseMenuWidget::ResumeGame()
 {
     bPaused = false;
     PausePanel->SetVisibility(ESlateVisibility::Hidden);
+    PauseBackgroud->SetVisibility(ESlateVisibility::Hidden);
     if (auto* PC = GetOwningPlayer< APlayerController >())
     {
         PC->SetPause(false);

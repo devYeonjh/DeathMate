@@ -2,11 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/VerticalBox.h"
+//#include "Components/VerticalBox.h"
 #include "PauseMenuWidget.generated.h"
 
 class UButton;
 class UVerticalBox;
+class UImage;
 
 /**
  * 게임 일시정지 메뉴를 처리하는 위젯 클래스
@@ -20,6 +21,10 @@ class DEATHMATE_API UPauseMenuWidget : public UUserWidget
 public:
     // 위젯이 키보드 포커스를 받을 수 있도록 설정
     virtual void NativeConstruct() override;
+
+    UPROPERTY(meta = (BindWidget))
+    UImage* PauseBackgroud;
+
     UPROPERTY(meta = (BindWidget))
     UVerticalBox* PausePanel;         // 일시정지 메뉴 전체 패널
 protected:
