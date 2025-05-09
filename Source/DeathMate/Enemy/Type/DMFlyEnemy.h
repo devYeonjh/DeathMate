@@ -17,4 +17,8 @@ class DEATHMATE_API ADMFlyEnemy : public ADMEnemyActor
 protected:
 	virtual void Move() override;
 	
+public:
+	// 감지 범위 설정
+	UPROPERTY(EditAnywhere, Category="AI")
+	float DetectionRange = 1000.0f;
 };
