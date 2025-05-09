@@ -26,6 +26,10 @@ protected:
 	class UInputAction* IA_DMMove1P;
 	class UInputAction* IA_Jump1P;
 
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	class UCameraComponent* MyCam;
+
 private:
 	class UPaperFlipbookComponent* MySprite;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))

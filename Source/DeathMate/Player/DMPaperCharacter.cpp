@@ -10,6 +10,7 @@
 #include "Player/DMSharedController.h"
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
 ADMPaperCharacter::ADMPaperCharacter()
 {
@@ -37,6 +38,43 @@ ADMPaperCharacter::ADMPaperCharacter()
 	MoveComp->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::Custom);
 	MoveComp->SetPlaneConstraintNormal(FVector(0.f, 1.f, 0.f));
 }
+
+void ADMPaperCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (PC && PC->GetPawn())
+	{
+		MyCam = PC->GetPawn()->FindComponentByClass<UCameraComponent>();
+	}
+}
+
+void ADMPaperCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (MyCam)
+	{
+		FVector CamLocation = MyCam->GetComponentLocation();
+		FVector CurLocation = GetActorLocation();
+		float Width = 1900.0f;
+		float Height = 960.0f;
+		float MinX = CamLocation.X - Width * 0.5f;
+		float MaxX = CamLocation.X + Width * 0.5f;
+		float MinZ = CamLocation.Z - Height * 0.5f;
+		float MaxZ = CamLocation.Z + Height * 0.5f;
+		if (CurLocation.X < MinX)
+			CurLocation.X = MinX;
+		else if (CurLocation.X > MaxX)
+			CurLocation.X = MaxX;
+		if (CurLocation.Z < MinZ)
+			CurLocation.Z = MinZ;
+		else if (CurLocation.Z > MaxZ)
+			CurLocation.Z = MaxZ;
+		SetActorLocation(CurLocation);
+	}
+}
+
 
 void ADMPaperCharacter::PossessedBy(AController* NewController)
 {
@@ -136,3 +174,4 @@ void ADMPaperCharacter::HandlePlayerSpecificPossession()
 		}
 	}
 }
+

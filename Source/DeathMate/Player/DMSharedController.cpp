@@ -12,22 +12,8 @@
 #include "UI/PauseMenuWidget.h"  
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
-void ADMSharedController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (PauseMenuClass)
-	{
-		PauseMenuInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
-		if (PauseMenuInstance)
-		{
-			PauseMenuInstance->AddToViewport();
-
-			PauseMenuInstance->ResumeGame();
-		}
-	}
-}
 ADMSharedController::ADMSharedController()
 {
 	static ConstructorHelpers::FObjectFinder<UInputAction> IAMoveObj(TEXT("/Game/Input/Action/IA_Move2P.IA_Move2P"));
@@ -54,10 +40,36 @@ ADMSharedController::ADMSharedController()
 	{
 		PF_Dash = PFIdleObj.Object;
 	}
+
+
 	static ConstructorHelpers::FClassFinder<UPauseMenuWidget> PauseBP(TEXT("/Game/UI/WB_PauseMenu.WB_PauseMenu_C"));
 	if (PauseBP.Succeeded())
 	{
 		PauseMenuClass = PauseBP.Class;
+	}
+
+}
+
+void ADMSharedController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (PC && PC->GetPawn())
+	{
+		MyCam = PC->GetPawn()->FindComponentByClass<UCameraComponent>();
+		UE_LOG(LogTemp, Warning, TEXT("MyCam : %s"), *MyCam->GetName());
+	}
+
+	if (PauseMenuClass)
+	{
+		PauseMenuInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
+		if (PauseMenuInstance)
+		{
+			PauseMenuInstance->AddToViewport();
+
+			PauseMenuInstance->ResumeGame();
+		}
 	}
 }
 
@@ -80,6 +92,34 @@ void ADMSharedController::SetupInputComponent()
 	InputComponent->BindAction("Pause", IE_Pressed, this, &ADMSharedController::HandlePause);
 }
 
+void ADMSharedController::OnFlipbookPlaybackPositionChanged(UPaperFlipbookComponent* FlipbookComp)
+{
+
+	if (FlipbookComp->GetFlipbook() != PF_Attack)
+	{
+		bHasFiredAttackNotify = false;
+		return;
+	}
+
+	const int32 CurrentFrame = FlipbookComp->GetPlaybackPositionInFrames();
+
+	if (CurrentFrame == 3 && !bHasFiredAttackNotify)
+	{
+		PerformAttack();
+		bHasFiredAttackNotify = true;
+	}
+
+	else if (CurrentFrame < 3)
+	{
+		bHasFiredAttackNotify = false;
+	}
+}
+
+void ADMSharedController::PerformAttack()
+{
+
+}
+
 
 
 void ADMSharedController::OnInputMoveTriggered(const FInputActionValue& Value)
@@ -92,11 +132,34 @@ void ADMSharedController::OnInputMoveTriggered(const FInputActionValue& Value)
 		FVector UpDirection = Player2P->GetActorUpVector() * MoveVector.Y;
 		FVector MoveDirection = ForwardDirection + UpDirection;
 
+		const float Width = 1900.0f;
+		const float Height = 960.0f;
+
+		FVector CurLocation = Player2P->GetActorLocation();
+		FVector ScreenCenter = MyCam->GetComponentLocation();
+
+		float MinX = ScreenCenter.X - Width * 0.5f;
+		float MaxX = ScreenCenter.X + Width * 0.5f;
+		float MinZ = ScreenCenter.Z - Height * 0.5f;
+		float MaxZ = ScreenCenter.Z + Height * 0.5f;
+
+		if ((CurLocation.X < MinX && MoveDirection.X < 0) || (CurLocation.X > MaxX && MoveDirection.X > 0))
+		{
+			MoveDirection.X = 0.0f;
+		}
+		if ((CurLocation.Z < MinZ && MoveDirection.Z < 0) || (CurLocation.Z > MaxZ && MoveDirection.Z > 0))
+		{
+			MoveDirection.Z = 0.0f;
+		}
+
 		if (MoveDirection.SizeSquared() > 0.0f)
 		{
 			Player2P->AddMovementInput(MoveDirection.GetSafeNormal());
 		}
- 
+
+		if (MoveDirection.X == 0.0f)
+			return;
+
 		float Yaw = (MoveDirection.X < 0.f) ? 0.f : 180.f;
 		Player2P->GetSprite()->SetRelativeRotation(FRotator(0.f, Yaw, 0.f));
 	}

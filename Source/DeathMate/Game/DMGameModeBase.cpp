@@ -14,6 +14,7 @@ ADMGameModeBase::ADMGameModeBase()
 {
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = ADMSharedController::StaticClass();
+	SpectatorClass = nullptr;
 }
 
 void ADMGameModeBase::BeginPlay()
@@ -110,6 +111,28 @@ ADMPaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerCon
 	PlayerPawn->SetPlayerIndex(PlayerIndex);
 	PlayerController->Possess(PlayerPawn);
 
+	if (PlayerIndex == 0)
+	{
+		Player1 = PlayerPawn;
+		SetCheckpoint(PlayerStart->GetActorLocation());
+	}
+	else if (PlayerIndex == 1)
+	{
+		Player2 = PlayerPawn;
+	}
+
 	return PlayerPawn;
+}
+
+void ADMGameModeBase::SetCheckpoint(const FVector& Pos)
+{
+	Checkpoint = Pos;
+	UE_LOG(LogTemp, Warning, TEXT("Set Checkpoint: %s"), *Checkpoint.ToString());
+}
+
+void ADMGameModeBase::RespawnAtCheckpoint()
+{
+	Player1->SetActorLocation(Checkpoint);
+	Player2->SetActorLocation(Checkpoint + FVector(-200.0f, 0.0f, 100.0f));
 }
 
