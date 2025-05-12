@@ -13,9 +13,17 @@ class DEATHMATE_API UStageSelectWidget : public UUserWidget
 protected:
     UPROPERTY(meta = (BindWidget))
     UButton* Stage1Button;
+    UPROPERTY(meta = (BindWidget))
+    UButton* Stage2Button;
+    UPROPERTY(meta = (BindWidget))
+    UButton* Stage3Button;
 
     virtual void NativeConstruct() override;
 
     UFUNCTION()
     void OnStage1Clicked();
+    UFUNCTION()
+    void OnStage2Clicked();
+    UFUNCTION()
+    void OnStage3Clicked();
 };
