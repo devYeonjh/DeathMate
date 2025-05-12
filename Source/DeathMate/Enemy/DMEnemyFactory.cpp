@@ -53,11 +53,11 @@ void ADMEnemyFactory::SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, f
 	FRotator SpawnRotation = GetActorRotation();
 	ADMEnemyActor* SpawndEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClassToSpawn, SpawnLocation, SpawnRotation);
 
-	if (SpawndEnemy)
+	/*if (SpawndEnemy)
 	{
 		SpawndEnemy->SetMoveSpeed(MoveSpeed);
 
-	};
+	};*/
 
 }
 
