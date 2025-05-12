@@ -20,9 +20,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Player")
-	TSubclassOf<class ADMPaperCharacter> PlayerCharacter1P;
+	TSubclassOf<class APaperCharacter> PlayerCharacter1P;
 	UPROPERTY(EditAnywhere, Category = "Player")
-	TSubclassOf<class ADMPaperCharacter> PlayerCharacter2P;
+	TSubclassOf<class APaperCharacter> PlayerCharacter2P;
 
 	UPROPERTY(EditAnywhere, Category = "Player")
 	class APlayerStart* PlayerStart1P;
@@ -40,12 +40,12 @@ private:
 
 	void SpawnLocalPlayer(int32 PlayerIndex, APlayerStart* PlayerStart, UWorld* World);
 
-	class ADMPaperCharacter* SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex);
+	class APaperCharacter* SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex);
 
 private:
 	FVector Checkpoint;
-	class ADMPaperCharacter* Player1;
-	class ADMPaperCharacter* Player2;
+	class APaperCharacter* Player1;
+	class APaperCharacter* Player2;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Checkpoint")

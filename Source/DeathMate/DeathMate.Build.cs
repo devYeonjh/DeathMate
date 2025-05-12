@@ -10,7 +10,7 @@ public class DeathMate : ModuleRules
 
         PublicIncludePaths.AddRange( new string[] {"DeathMate"} );
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "Paper2D" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "Paper2D", "PaperZD" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
