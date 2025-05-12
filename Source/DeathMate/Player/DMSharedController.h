@@ -3,15 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
-#include "UI/PauseMenuWidget.h"
 #include "DMSharedController.generated.h"
 
+
 class UPauseMenuWidget;
+class ADMPlayerBase;
+class UInputMappingContext;
+class UInputAction;
+class UCameraComponent;
 /**
  * 
  */
+
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputMoveTriggered1P, const FInputActionValue&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputJumpStarted1P, const FInputActionValue&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputJumpCompleted1P, const FInputActionValue&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputMoveTriggered2P, const FInputActionValue&);
+
+
 UCLASS()
 class DEATHMATE_API ADMSharedController : public APlayerController
 {
@@ -19,58 +30,47 @@ class DEATHMATE_API ADMSharedController : public APlayerController
 
 public:
 	ADMSharedController();
-
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPauseMenuWidget> PauseMenuClass;
 
 	UPROPERTY()
 	UPauseMenuWidget* PauseMenuInstance = nullptr;
+
+	FOnInputMoveTriggered1P OnInputMoveTriggered1PAction;
+	FOnInputJumpStarted1P OnInputJumpStarted1PAction;
+	FOnInputJumpCompleted1P OnInputJumpCompleted1PAction;
+
+	FOnInputMoveTriggered2P OnInputMoveTriggered2PAction;
+
 protected:
 	virtual void BeginPlay() override;
-
 	UPROPERTY(VisibleAnywhere, Category = "Player")
-	class ADMPaperCharacter* Player2P;
+	ADMPlayerBase* Player1P;
+	UPROPERTY(VisibleAnywhere, Category = "Player")
+	ADMPlayerBase* Player2P;
 
-	UPROPERTY(VisibleAnywhere, Category = "Input")
-	class UInputAction* IA_DMMove2P;
+private:
+	//--------------------------Player 1P Input--------------------------
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Move1P;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Jump1P;
 
-	UPROPERTY(VisibleAnywhere, Category = "Input")
-	class UInputAction* IA_Dash2P;
+private:
+	//--------------------------Player 2P Input--------------------------
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Move2P;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Dash2P;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Attack2P;
 
-	UPROPERTY(VisibleAnywhere, Category = "Input")
-	class UInputAction* IA_Attack2P;
+	UCameraComponent* MyCam;
 
-public:
-	UFUNCTION(BlueprintCallable, Category = "Player")
-	void SetPlayer2P(class ADMPaperCharacter* const NewPlayer2P);
 
 public:
 	virtual void SetupInputComponent() override;
 
-	bool bHasFiredAttackNotify;
-
-	UFUNCTION()
-	void OnFlipbookPlaybackPositionChanged(UPaperFlipbookComponent* FlipbookComp);
-
-	void PerformAttack();
-
-
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Idle;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Dash;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flipbook", meta = (AllowPrivateAccess = "true"))
-	class UPaperFlipbook* PF_Attack;
-
-	class UCameraComponent* MyCam;
-
-private:
-	void OnInputMoveTriggered(const FInputActionValue& Value);
-
-	void OnInputDash(const FInputActionValue& Value);
-
-	void OnInputAttack(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void HandlePause();

@@ -73,20 +73,21 @@ void ADMGameModeBase::SpawnLocalPlayer(int32 PlayerIndex, APlayerStart* PlayerSt
 		FString Error;
 		ULocalPlayer* NewLocalPlayer = GameInstance->CreateLocalPlayer(-1, Error, true);
 		ensure(NewLocalPlayer);
-		APlayerController* PlayerController2P = NewLocalPlayer->GetPlayerController(World);
+		APlayerController* PlayerController2P = NewLocalPlayer->PlayerController;
 		SpawnAndPosessPawn(World, PlayerController2P, PlayerStart, PlayerIndex);
 	}
 
 }
 
-ADMPaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex)
+APaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex)
 {
 	if (!World || !PlayerController || !PlayerStart)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid Parameters"));
 		return nullptr;
 	}
-	TSubclassOf<class ADMPaperCharacter> SpawnCharacter = nullptr;
+
+	TSubclassOf<class APaperCharacter> SpawnCharacter = nullptr;
 
 	if (PlayerIndex == 0)
 	{
@@ -102,13 +103,12 @@ ADMPaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerCon
 		return nullptr;
 	}
 
-	ADMPaperCharacter* PlayerPawn =
-		World->SpawnActor<ADMPaperCharacter>(SpawnCharacter,
+	APaperCharacter* PlayerPawn =
+		World->SpawnActor<APaperCharacter>(SpawnCharacter,
 			PlayerStart->GetActorLocation(),
 			PlayerStart->GetActorRotation());
 	ensure(PlayerPawn);
 
-	PlayerPawn->SetPlayerIndex(PlayerIndex);
 	PlayerController->Possess(PlayerPawn);
 
 	if (PlayerIndex == 0)

@@ -2,64 +2,26 @@
 
 
 #include "Player/DMSharedController.h"
-#include "Player/DMPaperCharacter.h"
 #include "UObject/ConstructorHelpers.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "PaperFlipbookComponent.h"
-#include "PaperFlipbook.h"
-#include "Game/DMGameModeBase.h"
 #include "UI/PauseMenuWidget.h"  
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Camera/CameraComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "Player/DMPlayerBase.h"
+
 
 ADMSharedController::ADMSharedController()
 {
-	static ConstructorHelpers::FObjectFinder<UInputAction> IAMoveObj(TEXT("/Game/Input/Action/IA_Move2P.IA_Move2P"));
-
-	if (IAMoveObj.Succeeded())
-	{
-		IA_DMMove2P = IAMoveObj.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> IADashObj(TEXT("/Game/Input/Action/IA_Dash.IA_Dash"));
-	if (IADashObj.Succeeded())
-	{
-		IA_Dash2P = IADashObj.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> PFDashObj(TEXT("/Game/PaperAsset/Character/Character2P/FlipBooks/grim_reaper_dash.grim_reaper_dash"));
-	if (PFDashObj.Succeeded())
-	{
-		PF_Idle = PFDashObj.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> PFIdleObj(TEXT("/Game/PaperAsset/Character/Character2P/FlipBooks/grim_reaper_idle.grim_reaper_idle"));
-	if (PFIdleObj.Succeeded())
-	{
-		PF_Dash = PFIdleObj.Object;
-	}
-
-
 	static ConstructorHelpers::FClassFinder<UPauseMenuWidget> PauseBP(TEXT("/Game/UI/WB_PauseMenu.WB_PauseMenu_C"));
 	if (PauseBP.Succeeded())
 	{
 		PauseMenuClass = PauseBP.Class;
 	}
-
 }
 
 void ADMSharedController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	if (PC && PC->GetPawn())
-	{
-		MyCam = PC->GetPawn()->FindComponentByClass<UCameraComponent>();
-		UE_LOG(LogTemp, Warning, TEXT("MyCam : %s"), *MyCam->GetName());
-	}
 
 	if (PauseMenuClass)
 	{
@@ -73,111 +35,26 @@ void ADMSharedController::BeginPlay()
 	}
 }
 
-void ADMSharedController::SetPlayer2P(ADMPaperCharacter* const NewPlayer2P)
-{
-	ensure(NewPlayer2P);
-	Player2P = NewPlayer2P;
-}
 
 void ADMSharedController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInputComponent && IA_DMMove2P)
+	if (EnhancedInputComponent)
 	{
-		EnhancedInputComponent->BindAction(IA_DMMove2P, ETriggerEvent::Triggered, this, &ADMSharedController::OnInputMoveTriggered);
-		EnhancedInputComponent->BindAction(IA_Dash2P, ETriggerEvent::Completed, this, &ADMSharedController::OnInputDash);
+		//--------------------------Player 1P Input--------------------------
+		EnhancedInputComponent->BindActionValueLambda(IA_Move1P, ETriggerEvent::Triggered, [this](const FInputActionValue& Value)->void { OnInputMoveTriggered1PAction.Broadcast(Value); });
+		EnhancedInputComponent->BindActionValueLambda(IA_Jump1P, ETriggerEvent::Started, [this](const FInputActionValue& Value)->void { OnInputJumpStarted1PAction.Broadcast(Value); });
+		EnhancedInputComponent->BindActionValueLambda(IA_Jump1P, ETriggerEvent::Completed, [this](const FInputActionValue& Value)->void { OnInputJumpCompleted1PAction.Broadcast(Value); });
+
+		//--------------------------Player 2P Input--------------------------
+		EnhancedInputComponent->BindActionValueLambda(IA_Move2P, ETriggerEvent::Triggered, [this](const FInputActionValue& Value)->void {OnInputMoveTriggered2PAction.Broadcast(Value); });
+
 	}
 	InputComponent->BindAction("Pause", IE_Pressed, this, &ADMSharedController::HandlePause);
 }
 
-void ADMSharedController::OnFlipbookPlaybackPositionChanged(UPaperFlipbookComponent* FlipbookComp)
-{
-
-	if (FlipbookComp->GetFlipbook() != PF_Attack)
-	{
-		bHasFiredAttackNotify = false;
-		return;
-	}
-
-	const int32 CurrentFrame = FlipbookComp->GetPlaybackPositionInFrames();
-
-	if (CurrentFrame == 3 && !bHasFiredAttackNotify)
-	{
-		PerformAttack();
-		bHasFiredAttackNotify = true;
-	}
-
-	else if (CurrentFrame < 3)
-	{
-		bHasFiredAttackNotify = false;
-	}
-}
-
-void ADMSharedController::PerformAttack()
-{
-
-}
-
-
-
-void ADMSharedController::OnInputMoveTriggered(const FInputActionValue& Value)
-{
-	if (Player2P)
-	{
-		FVector2D MoveVector = Value.Get<FVector2D>(); // ex) (1,0) (-1, 0) (0, 1) (0, -1)
-
-		FVector ForwardDirection = Player2P->GetActorForwardVector() * MoveVector.X;
-		FVector UpDirection = Player2P->GetActorUpVector() * MoveVector.Y;
-		FVector MoveDirection = ForwardDirection + UpDirection;
-
-		const float Width = 1900.0f;
-		const float Height = 960.0f;
-
-		FVector CurLocation = Player2P->GetActorLocation();
-		FVector ScreenCenter = MyCam->GetComponentLocation();
-
-		float MinX = ScreenCenter.X - Width * 0.5f;
-		float MaxX = ScreenCenter.X + Width * 0.5f;
-		float MinZ = ScreenCenter.Z - Height * 0.5f;
-		float MaxZ = ScreenCenter.Z + Height * 0.5f;
-
-		if ((CurLocation.X < MinX && MoveDirection.X < 0) || (CurLocation.X > MaxX && MoveDirection.X > 0))
-		{
-			MoveDirection.X = 0.0f;
-		}
-		if ((CurLocation.Z < MinZ && MoveDirection.Z < 0) || (CurLocation.Z > MaxZ && MoveDirection.Z > 0))
-		{
-			MoveDirection.Z = 0.0f;
-		}
-
-		if (MoveDirection.SizeSquared() > 0.0f)
-		{
-			Player2P->AddMovementInput(MoveDirection.GetSafeNormal());
-		}
-
-		if (MoveDirection.X == 0.0f)
-			return;
-
-		float Yaw = (MoveDirection.X < 0.f) ? 0.f : 180.f;
-		Player2P->GetSprite()->SetRelativeRotation(FRotator(0.f, Yaw, 0.f));
-	}
-}
-
-void ADMSharedController::OnInputDash(const FInputActionValue& Value)
-{
-	if (Player2P)
-	{
-		if (PF_Dash && Player2P->GetSprite()->GetFlipbook() != PF_Dash)
-		{
-			Player2P->GetSprite()->SetFlipbook(PF_Dash);
-			Player2P->GetSprite()->Play();
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Dash"));
-	}
-
-}
 
 void ADMSharedController::HandlePause()
 {

@@ -171,7 +171,7 @@ void ADMPaperCharacter::HandlePlayerSpecificPossession()
 		ADMSharedController* DMSharedController = Cast<ADMSharedController>(GetWorld()->GetFirstPlayerController());
 		if (DMSharedController)
 		{
-			DMSharedController->SetPlayer2P(this);
+			//DMSharedController->SetPlayer2P(this);
 		}
 	}
 }

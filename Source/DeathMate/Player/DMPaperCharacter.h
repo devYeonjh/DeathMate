@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
+#include "PaperZDCharacter.h"
 #include "InputActionValue.h"
 #include "DMPaperCharacter.generated.h"
 
@@ -11,7 +12,7 @@
  * 
  */
 UCLASS()
-class DEATHMATE_API ADMPaperCharacter : public APaperCharacter
+class DEATHMATE_API ADMPaperCharacter : public APaperZDCharacter
 {
 	GENERATED_BODY()
 
