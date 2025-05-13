@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Player/DMFollowingCamera.h"	
 
 
 ADMGameModeBase::ADMGameModeBase()
@@ -32,6 +33,44 @@ void ADMGameModeBase::BeginPlay()
 	SpawnLocalPlayer(SpawnedPlayerIndex++, PlayerStart1P, World);
 	SpawnLocalPlayer(SpawnedPlayerIndex, PlayerStart2P, World);
 
+}
+
+void ADMGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+	
+	if (MainCamera)
+		return;
+
+	UWorld* World = GetWorld();
+	if (!World)
+		return;
+
+	TArray<AActor*> FoundCams;
+	UGameplayStatics::GetAllActorsOfClass(World, FollowingCameraClass, FoundCams);
+	if (FoundCams.Num() > 0)
+	{
+		return;
+	}
+
+	APawn* Target = NewPlayer->GetPawn();
+
+	if (FollowingCameraClass && NewPlayer)
+	{
+		FActorSpawnParameters Params;
+		Params.Owner = this;
+		MainCamera = GetWorld()->SpawnActor<ADMFollowingCamera>(
+			FollowingCameraClass,
+			FVector::ZeroVector, FRotator(0.0f, -90.0f, 0.0f),
+			Params
+		);
+
+		if (MainCamera)
+		{
+			MainCamera->TargetActor = Target;
+			NewPlayer->SetViewTarget(MainCamera);
+		}
+	}
 }
 
 APlayerStart* ADMGameModeBase::FindPlayerStart(UWorld* World, const FName& TargetTag)

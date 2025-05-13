@@ -52,6 +52,5 @@ void ADMGroundEnemy::Move()
 	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);
 	SetActorLocation2D(NewLocation);
 
-	UE_LOG(LogTemp, Warning, TEXT("MoveSpeed: %f, Direction: %s"), MoveSpeed, *Direction.ToString());
 
 }

@@ -22,6 +22,14 @@ class DEATHMATE_API ADMPlayerBase : public APaperZDCharacter
 public:
 	ADMPlayerBase();
 
+protected:
+	UPROPERTY(BlueprintGetter = GetIsRunning, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	bool bIsRunning = false;
+
+public:
+	UFUNCTION(BlueprintGetter, Category = "Movement")
+	bool GetIsRunning() const { return bIsRunning; }
+
 private:
 	UInputMappingContext* IMC_PlayerInput;
 

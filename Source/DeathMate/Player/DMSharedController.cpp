@@ -44,13 +44,19 @@ void ADMSharedController::SetupInputComponent()
 	if (EnhancedInputComponent)
 	{
 		//--------------------------Player 1P Input--------------------------
+		EnhancedInputComponent->BindActionValueLambda(IA_Move1P, ETriggerEvent::Started, [this](const FInputActionValue& Value)->void { OnInputMoveStarted1PAction.Broadcast(Value); });
 		EnhancedInputComponent->BindActionValueLambda(IA_Move1P, ETriggerEvent::Triggered, [this](const FInputActionValue& Value)->void { OnInputMoveTriggered1PAction.Broadcast(Value); });
+		EnhancedInputComponent->BindActionValueLambda(IA_Move1P, ETriggerEvent::Completed, [this](const FInputActionValue& Value)->void { OnInputMoveCompleted1PAction.Broadcast(Value); });
+		
 		EnhancedInputComponent->BindActionValueLambda(IA_Jump1P, ETriggerEvent::Started, [this](const FInputActionValue& Value)->void { OnInputJumpStarted1PAction.Broadcast(Value); });
 		EnhancedInputComponent->BindActionValueLambda(IA_Jump1P, ETriggerEvent::Completed, [this](const FInputActionValue& Value)->void { OnInputJumpCompleted1PAction.Broadcast(Value); });
 
 		//--------------------------Player 2P Input--------------------------
+		EnhancedInputComponent->BindActionValueLambda(IA_Move2P, ETriggerEvent::Started, [this](const FInputActionValue& Value)->void { OnInputMoveStarted2PAction.Broadcast(Value); });
 		EnhancedInputComponent->BindActionValueLambda(IA_Move2P, ETriggerEvent::Triggered, [this](const FInputActionValue& Value)->void {OnInputMoveTriggered2PAction.Broadcast(Value); });
-
+		EnhancedInputComponent->BindActionValueLambda(IA_Move2P, ETriggerEvent::Completed, [this](const FInputActionValue& Value)->void { OnInputMoveCompleted2PAction.Broadcast(Value); });
+	
+		EnhancedInputComponent->BindActionValueLambda(IA_Attack2P, ETriggerEvent::Started, [this](const FInputActionValue& Value)->void { OnInputAttackStarted2PAction.Broadcast(Value); });
 	}
 	InputComponent->BindAction("Pause", IE_Pressed, this, &ADMSharedController::HandlePause);
 }

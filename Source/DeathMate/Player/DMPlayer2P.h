@@ -8,8 +8,8 @@
 #include "DMPlayer2P.generated.h"
 
 class UInputAction;
-class UCameraComponent;
 class UPaperFlipbook;
+class ADMFollowingCamera;
 /**
  * 
  */
@@ -26,8 +26,19 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	UCameraComponent* MyCam;
+	ADMFollowingCamera* MyCam;
 
 	UFUNCTION()
 	void OnInputMoveTriggered(const FInputActionValue& Value);
+
+private:
+	bool bIsAttacking = false;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void SetAttackFinished() { bIsAttacking = false; }
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void Attack();
+
 };

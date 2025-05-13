@@ -17,9 +17,11 @@ ADMPlayerBase::ADMPlayerBase()
 	}
 
 	MoveComp = GetCharacterMovement();
+	
 	MoveComp->SetPlaneConstraintEnabled(true);
 	MoveComp->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::Custom);
 	MoveComp->SetPlaneConstraintNormal(FVector(0.f, 1.f, 0.f));
+	bUseControllerRotationYaw = false;
 }
 
 void ADMPlayerBase::PossessedBy(AController* NewController)
