@@ -20,7 +20,7 @@ protected:
 	void UpdateVisibility(float DeltaTime);
 
 private:
-	float MoveDistance = 800.0f; // 최대 이동 거리
+	float MoveDistance = 800.f; // 최대 이동 거리
 	FVector MoveDirection = FVector(1, 0, 0); // 기본 X축 방향
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
 	FVector StartLocation;
@@ -29,7 +29,7 @@ private:
 	UMaterialInstanceDynamic* DynMaterial = nullptr;
 
 	float ToggleInterval = 1.5f;
-	float TimeSinceLastToggle = 0.0f;
+	float TimeSinceLastToggle = 0.f;
 	bool bVisible = true;
 };
 

@@ -48,12 +48,12 @@ void ADMBlinkingEnemy::UpdateVisibility(float DeltaTime)
 
 	if (TimeSinceLastToggle >= ToggleInterval)
 	{
-		TimeSinceLastToggle = 0.0f;
+		TimeSinceLastToggle = 0.f;
 		bVisible = !bVisible;
 
 		if (DynMaterial)
 		{
-			float NewOpacity = bVisible ? 1.0f : 0.0f;
+			float NewOpacity = bVisible ? 1.f : 0.f;
 			DynMaterial->SetScalarParameterValue(TEXT("OpacityParam"), NewOpacity);
 		}
 

@@ -25,6 +25,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void RespawnAction(const FVector& Checkpoint) override;
 
 private:
 	ADMFollowingCamera* MyCam;

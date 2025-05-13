@@ -8,11 +8,12 @@
 #include "DMGameModeBase.generated.h"
 
 class ADMFollowingCamera;
-class APaperCharacter;
+class ADMPlayerBase;
+class APlayerStart;
 
-/**
- * 
- */
+DECLARE_MULTICAST_DELEGATE_OneParam(FSpawnCheckPointDelegate, const FVector&);
+
+
 UCLASS()
 class DEATHMATE_API ADMGameModeBase : public AGameModeBase
 {
@@ -21,38 +22,33 @@ class DEATHMATE_API ADMGameModeBase : public AGameModeBase
 public:
 	ADMGameModeBase();
 
+protected:
+	virtual void BeginPlay() override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
 public:
 	UPROPERTY(EditAnywhere, Category = "Player")
-	TSubclassOf<APaperCharacter> PlayerCharacter1P;
+	TSubclassOf<ADMPlayerBase> PlayerCharacter1P;
 	UPROPERTY(EditAnywhere, Category = "Player")
-	TSubclassOf<APaperCharacter> PlayerCharacter2P;
-
-	UPROPERTY(EditAnywhere, Category = "Player")
-	class APlayerStart* PlayerStart1P;
-	UPROPERTY(EditAnywhere, Category = "Player")
-	class APlayerStart* PlayerStart2P;	
+	TSubclassOf<ADMPlayerBase> PlayerCharacter2P;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	TSubclassOf<ADMFollowingCamera> FollowingCameraClass;
 
 private:
 	int32 SpawnedPlayerIndex = 0;
-
-protected:
-	virtual void BeginPlay() override;
-	virtual void PostLogin(APlayerController* NewPlayer) override;
+	APlayerStart* PlayerStart1P;
+	APlayerStart* PlayerStart2P;
 
 private:
 	APlayerStart* FindPlayerStart(UWorld* World, const FName& TargetTag);
 
 	void SpawnLocalPlayer(int32 PlayerIndex, APlayerStart* PlayerStart, UWorld* World);
 
-	APaperCharacter* SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex);
+	ADMPlayerBase* SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex);
 
 private:
 	FVector Checkpoint;
-	APaperCharacter* Player1;
-	APaperCharacter* Player2;
 	ADMFollowingCamera* MainCamera;
 
 public:
@@ -61,6 +57,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Checkpoint")
 	void RespawnAtCheckpoint();
+
+	FSpawnCheckPointDelegate SpawnCheckPointDelegate;
 
 	FORCEINLINE ADMFollowingCamera* GetMainCamera() const { return MainCamera; }
 

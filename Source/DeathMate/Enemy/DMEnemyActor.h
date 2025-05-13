@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "DMPaperActorBase.h"
+#include "Interface/DMDamagedActor.h"
 #include "DMEnemyActor.generated.h"
 
 
 UCLASS(Abstract)
-class DEATHMATE_API ADMEnemyActor : public ADMPaperActorBase
+class DEATHMATE_API ADMEnemyActor : public ADMPaperActorBase, public IDMDamagedActor
 {
 	GENERATED_BODY()
 	
@@ -34,13 +35,12 @@ public:
 	void SetMoveSpeed(float NewSpeed);
 
 	UPROPERTY(EditAnywhere, Category="Enemy")
-	float LifeTime = 10.0f;
+	float LifeTime = 10.f;
 
 	UFUNCTION()
 	void OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION(BlueprintCallable)
-	void Death();
+	void TakeDamage() override;
 
 
 private:
@@ -48,6 +48,6 @@ private:
 	FVector StartLocation;
 	bool bMovingForward = true;
 
-    float LifeTimer = 0.0f;
+    float LifeTimer = 0.f;
 
 };

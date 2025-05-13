@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/DMPlayer2P.h"
@@ -12,32 +12,37 @@
 #include "Game/DMGameModeBase.h"
 #include "Player/DMFollowingCamera.h"
 #include "Engine/OverlapResult.h"
+#include "Interface/DMDamagedActor.h"
 
 
 
 ADMPlayer2P::ADMPlayer2P()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player2P"));
-	MoveComp->GravityScale = 0.0f;
+	
+	//2P Í∏∞Î≥∏ ÏÑ§Ï†ï(Í≥µÏ§ë Ïù¥Îèô)
+	MoveComp->GravityScale = 0.f;
 	MoveComp->bUseSeparateBrakingFriction = true;
-	MoveComp->BrakingFrictionFactor = 4.0f;
-	MoveComp->BrakingFriction = 8.0f;
+	MoveComp->BrakingFrictionFactor = 4.f;
+	MoveComp->BrakingFriction = 8.f;
 	MoveComp->DefaultLandMovementMode = EMovementMode::MOVE_Flying;
-	MoveComp->MaxFlySpeed = 600.0f;
-	MoveComp->BrakingDecelerationFlying = 100.0f;
+	MoveComp->MaxFlySpeed = 600.f;
+	MoveComp->BrakingDecelerationFlying = 100.f;
 }
 
 void ADMPlayer2P::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	AGameModeBase* GM = GetWorld()->GetAuthGameMode();
-	if (GM)
+	if (AGameModeBase* GM = GetWorld()->GetAuthGameMode())
 	{
 		ADMGameModeBase* DMGM = Cast<ADMGameModeBase>(GM);
 		if (DMGM)
 		{
 			MyCam = DMGM->GetMainCamera();
+			DMGM->SpawnCheckPointDelegate.AddUObject(this, &ADMPlayer2P::RespawnAction);
 		}
 	}
 	
@@ -58,6 +63,7 @@ void ADMPlayer2P::BeginPlay()
 	}	
 }
 
+//Ïπ¥Î©îÎùº ÌÅ¨Í∏∞Ïóê ÎßûÍ≤åÏù¥Îèô Ï†úÌïú
 void ADMPlayer2P::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -65,12 +71,12 @@ void ADMPlayer2P::Tick(float DeltaTime)
 	{
 		FVector CamLocation = MyCam->GetActorLocation();
 		FVector CurLocation = GetActorLocation();
-		float Width = 1900.0f;
-		float Height = 960.0f;
-		float MinX = CamLocation.X - Width * 0.5f;
-		float MaxX = CamLocation.X + Width * 0.5f;
-		float MinZ = CamLocation.Z - Height * 0.5f;
-		float MaxZ = CamLocation.Z + Height * 0.5f;
+
+		float MinX = CamLocation.X - MyCam->GetCameraHalfWidth();
+		float MaxX = CamLocation.X + MyCam->GetCameraHalfWidth();
+		float MinZ = CamLocation.Z - MyCam->GetCameraHalfHeight();
+		float MaxZ = CamLocation.Z + MyCam->GetCameraHalfHeight();
+		
 		if (CurLocation.X < MinX)
 			CurLocation.X = MinX;
 		else if (CurLocation.X > MaxX)
@@ -83,43 +89,47 @@ void ADMPlayer2P::Tick(float DeltaTime)
 	}
 }
 
+void ADMPlayer2P::RespawnAction(const FVector& Checkpoint)
+{
+	//TODO : Î¶¨Ïä§Ìè∞ Ïï°ÏÖò Íµ¨ÌòÑ
+	FVector Player2POffset = FVector(-200.f, 0.f, 100.f);
+	Super::RespawnAction(Checkpoint + Player2POffset);
+}
+
 void ADMPlayer2P::OnInputMoveTriggered(const FInputActionValue& Value)
 {
 	FVector2D MoveVector = Value.Get<FVector2D>(); // ex) (1,0) (-1, 0) (0, 1) (0, -1)
 
-	FVector MoveDirection = FVector(MoveVector.X, 0.0f, MoveVector.Y);
+	FVector MoveDirection = FVector(MoveVector.X, 0.f, MoveVector.Y);
 
-	const float Width = 1900.0f;
-	const float Height = 960.0f;
-
+	FVector CamLocation = MyCam->GetActorLocation();
 	FVector CurLocation = GetActorLocation();
-	FVector ScreenCenter = MyCam->GetActorLocation();
 
-	float MinX = ScreenCenter.X - Width * 0.5f;
-	float MaxX = ScreenCenter.X + Width * 0.5f;
-	float MinZ = ScreenCenter.Z - Height * 0.5f;
-	float MaxZ = ScreenCenter.Z + Height * 0.5f;
+	float MinX = CamLocation.X - MyCam->GetCameraHalfWidth();
+	float MaxX = CamLocation.X + MyCam->GetCameraHalfWidth();
+	float MinZ = CamLocation.Z - MyCam->GetCameraHalfHeight();
+	float MaxZ = CamLocation.Z + MyCam->GetCameraHalfHeight();
 
 	if ((CurLocation.X < MinX && MoveDirection.X < 0) || (CurLocation.X > MaxX && MoveDirection.X > 0))
 	{
-		MoveDirection.X = 0.0f;
+		MoveDirection.X = 0.f;
 	}
 	if ((CurLocation.Z < MinZ && MoveDirection.Z < 0) || (CurLocation.Z > MaxZ && MoveDirection.Z > 0))
 	{
-		MoveDirection.Z = 0.0f;
+		MoveDirection.Z = 0.f;
 	}
 
-	if (MoveDirection.SizeSquared() > 0.0f)
+	if (MoveDirection.SizeSquared() > 0.f)
 	{
 		AddMovementInput(MoveDirection.GetSafeNormal());
 	}
 
-	if (MoveDirection.X == 0.0f)
+	if (MoveDirection.X == 0.f)
 		return;
 
-	float Yaw = (MoveDirection.X < 0.0f) ? 0.0f : 180.0f;
+	float Yaw = (MoveDirection.X < 0.f) ? 0.f : 180.f;
 
-	SetActorRotation(FRotator(0.0f, Yaw, 0.0f));
+	SetActorRotation(FRotator(0.f, Yaw, 0.f));
 }
 
 void ADMPlayer2P::Attack()
@@ -127,10 +137,10 @@ void ADMPlayer2P::Attack()
 	UWorld* World = GetWorld();
 	if (!World) return;
 
-	const FVector LocalOffset(-40.0f, 0.0f, 0.0f);
+	const FVector LocalOffset(-40.f, 0.f, 0.f);
 	const FVector Center = GetActorLocation() + GetActorRotation().RotateVector(LocalOffset);
 
-	const FVector BoxExtent(50.0f, 30.0f, 20.0f);
+	const FVector BoxExtent(50.f, 30.f, 20.f);
 
 	TArray<FOverlapResult> Results;
 	bool bHit = GetWorld()->OverlapMultiByProfile(
@@ -146,34 +156,27 @@ void ADMPlayer2P::Attack()
 		AActor* HitActor = Result.GetActor();
 		if (HitActor && HitActor != this)
 		{
-			if (AttackFlipbookActorClass && AttackFlipbookAsset)
+			IDMDamagedActor* DamagedActor = Cast<IDMDamagedActor>(HitActor);
+			if (DamagedActor)
 			{
-				FActorSpawnParameters Params;
-				Params.Owner = this;
-				// ø©±‚º≠¥¬ ∞¯∞› π⁄Ω∫¿« Centerø° Ω∫∆˘
-				APaperFlipbookActor* FBActor = World->SpawnActor<APaperFlipbookActor>(AttackFlipbookActorClass,Center,FRotator::ZeroRotator,Params);
-				if (FBActor)
+				DamagedActor->TakeDamage();
+				if (AttackFlipbookActorClass && AttackFlipbookAsset)
 				{
-					UPaperFlipbookComponent* FBComp = FBActor->GetRenderComponent();
-					FBComp->SetFlipbook(AttackFlipbookAsset);
-					FBComp->PlayFromStart();
+					FActorSpawnParameters Params;
+					Params.Owner = this;
+					APaperFlipbookActor* FBActor = World->SpawnActor<APaperFlipbookActor>(AttackFlipbookActorClass, Center, FRotator::ZeroRotator, Params);
+					if (FBActor)
+					{
+						UPaperFlipbookComponent* FBComp = FBActor->GetRenderComponent();
+						FBComp->SetFlipbook(AttackFlipbookAsset);
+						FBComp->PlayFromStart();
 
-					// «√∑π¿Ã ±Ê¿Ã∏∏≈≠ ±‚¥Ÿ∑»¥Ÿ∞° ¿⁄µø ∆ƒ±´
-					float Length = FBComp->GetFlipbookLength();
-					FTimerHandle Handle;
-					World->GetTimerManager().SetTimer(Handle,[FBActor]() { FBActor->Destroy(); },Length,false);
+						float Length = FBComp->GetFlipbookLength();
+						FTimerHandle Handle;
+						World->GetTimerManager().SetTimer(Handle, [FBActor]() { FBActor->Destroy(); }, Length, false);
+					}
 				}
 			}
-			// Hit logic here
-			UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
-			// Example: Apply damage or any other logic
-			// UGameplayStatics::ApplyDamage(HitActor, DamageAmount, GetController(), this, UDamageType::StaticClass());
 		}
 	}
-
-	
-	DrawDebugBox(World, Center, BoxExtent,
-		Owner->GetActorRotation().Quaternion(),
-		FColor::Red, false, 1.f, 0, 2.f);
-
 }

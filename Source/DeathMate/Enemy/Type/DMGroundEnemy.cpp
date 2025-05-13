@@ -17,8 +17,8 @@ void ADMGroundEnemy::Move()
 	FVector CurrentLocation = GetActorLocation();
 
 	// 낙하 확인용 라인 트레이스(바닥 체크)
-	FVector Start = CurrentLocation + FVector(Direction.X * 20.0f, 0.0f, 0.0f); // 앞으로 약간 이동
-	FVector End = Start + FVector(0.0f, 0.0f, -50.0f); // 아래 방향
+	FVector Start = CurrentLocation + FVector(Direction.X * 20.f, 0.f, 0.f); // 앞으로 약간 이동
+	FVector End = Start + FVector(0.f, 0.f, -50.f); // 아래 방향
 
 	FHitResult FloorHit;
 	FCollisionQueryParams Params;
@@ -28,7 +28,7 @@ void ADMGroundEnemy::Move()
 
 	// 벽 충돌 확인용 라인 트레이스(전방 장애물)
 	FVector WallCheckStart = CurrentLocation;
-	FVector WallCheckEnd = CurrentLocation + Direction * 20.0f;
+	FVector WallCheckEnd = CurrentLocation + Direction * 20.f;
 
 	FHitResult WallHit;
 	// ECollisionChannel TraceChannel 이 파라미터에 ECC_GameTraceChannel2[Enemy]
@@ -38,15 +38,15 @@ void ADMGroundEnemy::Move()
 #if (WITH_EDITOR)
 	{
 		// 디버그 시각화(필요 시)
-		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 0.1f, 0, 1.0f);
-		DrawDebugLine(GetWorld(), WallCheckStart, WallCheckEnd, FColor::Red, false, 0.1f, 0, 1.0f);
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 0.1f, 0, 1.f);
+		DrawDebugLine(GetWorld(), WallCheckStart, WallCheckEnd, FColor::Red, false, 0.1f, 0, 1.f);
 	}
 #endif
 
 	// 방향 전환 조건
 	if (!bOnGround || bHitWall)
 	{
-		Direction *= -1.0f;
+		Direction *= -1.f;
 	}
 
 	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);

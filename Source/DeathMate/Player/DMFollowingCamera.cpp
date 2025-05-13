@@ -22,7 +22,7 @@ ADMFollowingCamera::ADMFollowingCamera()
 	CameraComponent->SetupAttachment(RootComponent);
 
 	CameraComponent->ProjectionMode = ECameraProjectionMode::Orthographic;
-	CameraComponent->OrthoWidth = 1920.0f;
+	CameraComponent->OrthoWidth = 1920.f;
 	CameraComponent->bAutoCalculateOrthoPlanes = false;
 	CameraComponent->bUseCameraHeightAsViewTarget = false;
 }

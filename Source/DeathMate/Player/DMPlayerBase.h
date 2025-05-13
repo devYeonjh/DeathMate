@@ -23,20 +23,24 @@ public:
 	ADMPlayerBase();
 
 protected:
+	virtual void PossessedBy(AController* NewController) override;
+	
+	UFUNCTION()
+	virtual void RespawnAction(const FVector& Checkpoint);
+
+protected:
 	UPROPERTY(BlueprintGetter = GetIsRunning, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	bool bIsRunning = false;
+	
+	UCharacterMovementComponent* MoveComp;
+
+private:
+	UInputMappingContext* IMC_PlayerInput;
 
 public:
 	UFUNCTION(BlueprintGetter, Category = "Movement")
 	bool GetIsRunning() const { return bIsRunning; }
 
-private:
-	UInputMappingContext* IMC_PlayerInput;
 
-protected:
-	UCharacterMovementComponent* MoveComp;
-
-protected:
-	virtual void PossessedBy(AController* NewController) override;
 	
 };

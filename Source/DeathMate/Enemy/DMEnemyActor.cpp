@@ -8,7 +8,7 @@
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/StaticMeshActor.h"
-#include "Player/DMPaperCharacter.h"
+#include "Player/DMPlayer1P.h"
 #include "PaperFlipbookComponent.h"
 
 // Sets default values
@@ -17,7 +17,7 @@ ADMEnemyActor::ADMEnemyActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	BoxComp->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f)); // 충돌 박스의 크기 설정
+	BoxComp->SetBoxExtent(FVector(50.f, 50.f, 50.f)); // 충돌 박스의 크기 설정
 
 	BoxComp->SetCollisionProfileName(TEXT("Enemy")); // 충돌 프로필 설정
 }
@@ -34,7 +34,7 @@ void ADMEnemyActor::SetActorLocation2D(FVector Pos)
 {
 	float CurX = GetActorLocation().X;
 
-	FVector Dir = CurX < Pos.X ? FVector(1.0f, 1.0f, 1.0f) : FVector(-1.0f, 1.0f, 1.0f);
+	FVector Dir = CurX < Pos.X ? FVector(1.f, 1.f, 1.f) : FVector(-1.f, 1.f, 1.f);
 
 	if (FlipbookComp)
 	{
@@ -69,19 +69,18 @@ void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	if (OtherActor)
 	{
-		ADMPaperCharacter* Player1P = Cast<ADMPaperCharacter>(OtherActor);
-		ensure(Player1P);
-
-		//체크포인트로 되돌아가는 함수
-		UWorld* world = GetWorld();
-		ADMGameModeBase* DMGameMode = Cast<ADMGameModeBase>(UGameplayStatics::GetGameMode(world));
+		ADMPlayer1P* Player1P = Cast<ADMPlayer1P>(OtherActor);
+		if (Player1P)
+		{
+			Player1P->TakeDamage();
+		}
 	}
 }
 
-void ADMEnemyActor::Death()
+void ADMEnemyActor::TakeDamage()
 {
-	//죽엇을때 이펙트 or 파티클 추가
-
+	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"));
 	Destroy();
 }
+
 
