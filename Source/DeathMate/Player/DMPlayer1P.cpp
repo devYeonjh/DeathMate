@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Game/DMGameModeBase.h"
+#include "Player/DMPlayer2P.h"
 
 ADMPlayer1P::ADMPlayer1P()
 {
@@ -33,7 +34,7 @@ void ADMPlayer1P::BeginPlay()
 	{
 		DMGM->SpawnCheckPointDelegate.AddUObject(this, &ADMPlayer1P::RespawnAction);
 	}
-
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ADMPlayer1P::OnPlayer1POverlap);
 }
 
 
@@ -49,6 +50,18 @@ void ADMPlayer1P::OnInputMoveTriggered(const FInputActionValue& Value)
 
 	float Yaw = (MoveDirection < 0.f) ? 180.f : 0.f;
 	SetActorRotation(FRotator(0.f, Yaw, 0.f));
+}
+
+void ADMPlayer1P::OnPlayer1POverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor)
+	{
+		ADMPlayer2P* Player2P = Cast<ADMPlayer2P>(OtherActor);
+		if (Player2P)
+		{
+			DMGM->RespawnAtCheckpoint();
+		}
+	}
 }
 
 void ADMPlayer1P::TakeDamage()
