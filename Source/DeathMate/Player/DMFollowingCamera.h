@@ -22,26 +22,33 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Follow")
-	AActor* TargetActor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Follow")
-	FVector FollowOffset = FVector(0.f, 500.0f, 200.f);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Follow")
-	float SmoothSpeed = 5.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Follow")
-	UCameraComponent* CameraComponent;
 
 private:
 	float MinX, MaxX;
 	float MinZ, MaxZ;
 	float CameraHalfWidth;
 	float CameraHalfHeight;
+	
 	APaperTileMapActor* TileMapActor = nullptr;
+	UCameraComponent* CameraComponent;
+
+public:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Follow")
+	AActor* TargetActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Follow")
+	FVector FollowOffset = FVector(0.f, 500.f, 200.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Follow")
+	float SmoothSpeed = 5.f;
+
+	FORCEINLINE float GetCameraHalfWidth() const { return CameraHalfWidth; }
+	FORCEINLINE float GetCameraHalfHeight() const { return CameraHalfHeight; }
+
+private:
+	void RespawnAction(const FVector& Checkpoint);
+
+
 };

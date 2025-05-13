@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "DMDamagedObject.generated.h"
+#include "DMDamagedActor.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UDMDamagedObject : public UInterface
+class UDMDamagedActor : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,10 +16,11 @@ class UDMDamagedObject : public UInterface
 /**
  * 
  */
-class DEATHMATE_API IDMDamagedObject
+class DEATHMATE_API IDMDamagedActor
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual void TakeDamage() = 0;
 };

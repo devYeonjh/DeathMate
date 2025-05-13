@@ -26,7 +26,7 @@
 		if (DistanceToPlayer <= DetectionRange)
 		{
 			FVector DirectionToPlayer = PlayerLocation - EnemyLocation;
-			DirectionToPlayer.Z += 50.0f;
+			DirectionToPlayer.Z += 50.f;
 			DirectionToPlayer.Normalize();
 
 			FVector Velocity = DirectionToPlayer * MoveSpeed * GetWorld()->GetDeltaSeconds();

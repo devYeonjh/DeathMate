@@ -25,6 +25,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void RespawnAction(const FVector& Checkpoint) override;
 
 private:
 	ADMFollowingCamera* MyCam;
@@ -34,6 +35,7 @@ private:
 
 private:
 	bool bIsAttacking = false;
+	bool bSkipClamp = false;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")

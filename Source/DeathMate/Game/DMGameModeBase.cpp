@@ -1,14 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Game/DMGameModeBase.h"
-#include "Player/DMPaperCharacter.h"
 #include "Player/DMSharedController.h"
+#include "Player/DMFollowingCamera.h"
+#include "Player/DMPlayerBase.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Player/DMFollowingCamera.h"	
 
 
 ADMGameModeBase::ADMGameModeBase()
@@ -61,7 +61,7 @@ void ADMGameModeBase::PostLogin(APlayerController* NewPlayer)
 		Params.Owner = this;
 		MainCamera = GetWorld()->SpawnActor<ADMFollowingCamera>(
 			FollowingCameraClass,
-			FVector::ZeroVector, FRotator(0.0f, -90.0f, 0.0f),
+			FVector::ZeroVector, FRotator(0.f, -90.f, 0.f),
 			Params
 		);
 
@@ -118,7 +118,7 @@ void ADMGameModeBase::SpawnLocalPlayer(int32 PlayerIndex, APlayerStart* PlayerSt
 
 }
 
-APaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex)
+ADMPlayerBase* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerController* PlayerController, APlayerStart* PlayerStart, int32 PlayerIndex)
 {
 	if (!World || !PlayerController || !PlayerStart)
 	{
@@ -126,7 +126,7 @@ APaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerContr
 		return nullptr;
 	}
 
-	TSubclassOf<class APaperCharacter> SpawnCharacter = nullptr;
+	TSubclassOf<ADMPlayerBase> SpawnCharacter = nullptr;
 
 	if (PlayerIndex == 0)
 	{
@@ -142,22 +142,18 @@ APaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerContr
 		return nullptr;
 	}
 
-	APaperCharacter* PlayerPawn =
-		World->SpawnActor<APaperCharacter>(SpawnCharacter,
+	ADMPlayerBase* PlayerPawn =
+		World->SpawnActor<ADMPlayerBase>(SpawnCharacter,
 			PlayerStart->GetActorLocation(),
 			PlayerStart->GetActorRotation());
 	ensure(PlayerPawn);
 
 	PlayerController->Possess(PlayerPawn);
 
+	// 처음 생성된 위치를 체크포인트 설정
 	if (PlayerIndex == 0)
 	{
-		Player1 = PlayerPawn;
 		SetCheckpoint(PlayerStart->GetActorLocation());
-	}
-	else if (PlayerIndex == 1)
-	{
-		Player2 = PlayerPawn;
 	}
 
 	return PlayerPawn;
@@ -166,12 +162,11 @@ APaperCharacter* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerContr
 void ADMGameModeBase::SetCheckpoint(const FVector& Pos)
 {
 	Checkpoint = Pos;
-	UE_LOG(LogTemp, Warning, TEXT("Set Checkpoint: %s"), *Checkpoint.ToString());
 }
 
+//플레이어가 체크포인트에서 리스폰
 void ADMGameModeBase::RespawnAtCheckpoint()
 {
-	Player1->SetActorLocation(Checkpoint);
-	Player2->SetActorLocation(Checkpoint + FVector(-200.0f, 0.0f, 100.0f));
+	SpawnCheckPointDelegate.Broadcast(Checkpoint);
 }
 

@@ -37,3 +37,8 @@ void ADMPlayerBase::PossessedBy(AController* NewController)
 		}
 	}
 }
+
+void ADMPlayerBase::RespawnAction(const FVector& Checkpoint)
+{
+	SetActorLocation(Checkpoint);
+}

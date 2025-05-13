@@ -31,11 +31,11 @@ void ADMEnemyFactory::Tick(float DeltaTime)
 
 		if (SpawnData.CurrentTime >= SpawnData.DelayTime)
 		{
-			SpawnData.CurrentTime = 0.0f;
+			SpawnData.CurrentTime = 0.f;
 
 			if (SpawnData.EnemyClass != nullptr)
 			{
-				float MoveSpeed = (SpawnData.DelayTime < 2.0f) ? 1000.0f : 500.0f;
+				float MoveSpeed = (SpawnData.DelayTime < 2.f) ? 1000.f : 500.f;
 				SpawnEnemy(SpawnData.EnemyClass, MoveSpeed);
 			}
 		}
