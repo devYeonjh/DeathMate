@@ -9,6 +9,7 @@
 
 class UInputAction;
 class UPaperFlipbook;
+class APaperFlipbookActor;
 class ADMFollowingCamera;
 /**
  * 
@@ -40,5 +41,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void Attack();
+	UPROPERTY(EditDefaultsOnly, Category = "Combat|VFX")
+	TSubclassOf<APaperFlipbookActor> AttackFlipbookActorClass;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat|VFX")
+	UPaperFlipbook* AttackFlipbookAsset;
 
 };

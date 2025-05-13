@@ -3,6 +3,7 @@
 
 #include "Player/DMPlayer2P.h"
 #include "UObject/ConstructorHelpers.h"
+#include "PaperFlipbookActor.h"
 #include "PaperFlipbookComponent.h"
 #include "Player/DMSharedController.h"
 #include "Components/CapsuleComponent.h"
@@ -145,6 +146,24 @@ void ADMPlayer2P::Attack()
 		AActor* HitActor = Result.GetActor();
 		if (HitActor && HitActor != this)
 		{
+			if (AttackFlipbookActorClass && AttackFlipbookAsset)
+			{
+				FActorSpawnParameters Params;
+				Params.Owner = this;
+				// 여기서는 공격 박스의 Center에 스폰
+				APaperFlipbookActor* FBActor = World->SpawnActor<APaperFlipbookActor>(AttackFlipbookActorClass,Center,FRotator::ZeroRotator,Params);
+				if (FBActor)
+				{
+					UPaperFlipbookComponent* FBComp = FBActor->GetRenderComponent();
+					FBComp->SetFlipbook(AttackFlipbookAsset);
+					FBComp->PlayFromStart();
+
+					// 플레이 길이만큼 기다렸다가 자동 파괴
+					float Length = FBComp->GetFlipbookLength();
+					FTimerHandle Handle;
+					World->GetTimerManager().SetTimer(Handle,[FBActor]() { FBActor->Destroy(); },Length,false);
+				}
+			}
 			// Hit logic here
 			UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
 			// Example: Apply damage or any other logic
