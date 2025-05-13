@@ -13,6 +13,8 @@
 #include "Player/DMFollowingCamera.h"
 #include "Engine/OverlapResult.h"
 #include "Interface/DMDamagedActor.h"
+#include "Game/DMGameModeBase.h"
+#include "Components/CapsuleComponent.h"
 
 
 
@@ -67,26 +69,57 @@ void ADMPlayer2P::BeginPlay()
 void ADMPlayer2P::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (MyCam)
-	{
-		FVector CamLocation = MyCam->GetActorLocation();
-		FVector CurLocation = GetActorLocation();
 
-		float MinX = CamLocation.X - MyCam->GetCameraHalfWidth();
-		float MaxX = CamLocation.X + MyCam->GetCameraHalfWidth();
-		float MinZ = CamLocation.Z - MyCam->GetCameraHalfHeight();
-		float MaxZ = CamLocation.Z + MyCam->GetCameraHalfHeight();
-		
-		if (CurLocation.X < MinX)
-			CurLocation.X = MinX;
-		else if (CurLocation.X > MaxX)
-			CurLocation.X = MaxX;
-		if (CurLocation.Z < MinZ)
-			CurLocation.Z = MinZ;
-		else if (CurLocation.Z > MaxZ)
-			CurLocation.Z = MaxZ;
-		SetActorLocation(CurLocation);
+	if (bSkipClamp)
+	{
+		bSkipClamp = false;
+		return;
 	}
+
+	FVector CamLocation = MyCam->GetActorLocation();
+	FVector CurLoc = GetActorLocation();
+	FVector TargetLoc = CurLoc;
+	bool bNeedClamp = false;
+
+	float MinX = CamLocation.X - MyCam->GetCameraHalfWidth();
+	float MaxX = CamLocation.X + MyCam->GetCameraHalfWidth();
+	float MinZ = CamLocation.Z - MyCam->GetCameraHalfHeight();
+	float MaxZ = CamLocation.Z + MyCam->GetCameraHalfHeight();
+		
+	if (TargetLoc.X < MinX) { TargetLoc.X = MinX; bNeedClamp = true; }
+	else if (TargetLoc.X > MaxX) { TargetLoc.X = MaxX; bNeedClamp = true; }
+	if (TargetLoc.Z < MinZ) { TargetLoc.Z = MinZ; bNeedClamp = true; }
+	else if (TargetLoc.Z > MaxZ) { TargetLoc.Z = MaxZ; bNeedClamp = true; }
+
+	if (bNeedClamp)
+	{
+		FHitResult Hit;
+		FCollisionQueryParams Params(NAME_None, /*bTraceComplex=*/false, this);
+
+		bool bBlocked = GetWorld()->SweepSingleByChannel(
+				Hit,
+				CurLoc,
+				TargetLoc,
+				FQuat::Identity,
+				ECC_WorldStatic,
+				FCollisionShape::MakeCapsule(
+				GetCapsuleComponent()->GetScaledCapsuleRadius(),
+				GetCapsuleComponent()->GetScaledCapsuleHalfHeight()
+			),
+			/*Params*/       Params
+		);
+
+		if (bBlocked)
+		{
+			// 지형에 박힌 걸 감지하면 체크포인트로 리스폰
+			if (auto* GM = Cast<ADMGameModeBase>(GetWorld()->GetAuthGameMode()))
+			{
+				GM->RespawnAtCheckpoint();  // GameMode에서 브로드캐스트 → ADMPlayer2P::RespawnAction 호출 :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}
+			}
+			return;
+		}
+	}
+	SetActorLocation(TargetLoc);
 }
 
 void ADMPlayer2P::RespawnAction(const FVector& Checkpoint)
@@ -94,6 +127,7 @@ void ADMPlayer2P::RespawnAction(const FVector& Checkpoint)
 	//TODO : 리스폰 액션 구현
 	FVector Player2POffset = FVector(-200.f, 0.f, 100.f);
 	Super::RespawnAction(Checkpoint + Player2POffset);
+	bSkipClamp = true;
 }
 
 void ADMPlayer2P::OnInputMoveTriggered(const FInputActionValue& Value)

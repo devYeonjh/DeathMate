@@ -35,6 +35,7 @@ private:
 
 private:
 	bool bIsAttacking = false;
+	bool bSkipClamp = false;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")

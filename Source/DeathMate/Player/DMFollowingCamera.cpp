@@ -2,6 +2,7 @@
 
 
 #include "Player/DMFollowingCamera.h"
+#include "Game/DMGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "Camera/CameraComponent.h"
@@ -65,6 +66,11 @@ void ADMFollowingCamera::BeginPlay()
 	{
 		PC->SetViewTarget(this);
 	}
+
+	if (ADMGameModeBase* GM = Cast<ADMGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		GM->SpawnCheckPointDelegate.AddUObject(this, &ADMFollowingCamera::RespawnAction);
+	}
 	
 }
 
@@ -92,6 +98,25 @@ void ADMFollowingCamera::Tick(float DeltaTime)
         MinZ + CameraHalfHeight,
         MaxZ - CameraHalfHeight
     );
+
+	SetActorLocation(Clamped);
+}
+
+void ADMFollowingCamera::RespawnAction(const FVector& Checkpoint)
+{
+	const FVector DesiredLocation = Checkpoint + FollowOffset;
+
+	FVector Clamped = DesiredLocation;
+	Clamped.X = FMath::Clamp(
+		DesiredLocation.X,
+		MinX + CameraHalfWidth,
+		MaxX - CameraHalfWidth
+	);
+	Clamped.Z = FMath::Clamp(
+		DesiredLocation.Z,
+		MinZ + CameraHalfHeight,
+		MaxZ - CameraHalfHeight
+	);
 
 	SetActorLocation(Clamped);
 }

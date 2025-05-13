@@ -47,5 +47,8 @@ public:
 	FORCEINLINE float GetCameraHalfWidth() const { return CameraHalfWidth; }
 	FORCEINLINE float GetCameraHalfHeight() const { return CameraHalfHeight; }
 
+private:
+	void RespawnAction(const FVector& Checkpoint);
+
 
 };
