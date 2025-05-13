@@ -38,10 +38,10 @@ void ADMPlayer1P::OnInputMoveTriggered(const FInputActionValue& Value)
 	if (FMath::IsNearlyZero(MoveDirection))
 		return;
 
-	AddMovementInput(GetActorForwardVector(), MoveDirection);
+	AddMovementInput(FVector(MoveDirection, 0.0f, 0.0f));
 
-	float Yaw = (MoveDirection < 0.f) ? 180.f : 0.f;
-	GetSprite()->SetRelativeRotation(FRotator(0.f, Yaw, 0.f));
+	float Yaw = (MoveDirection < 0.0f) ? 180.0f : 0.f;
+	SetActorRotation(FRotator(0.0f, Yaw, 0.0f));
 }
 
 

@@ -4,10 +4,14 @@
 #include "Player/DMPlayer2P.h"
 #include "UObject/ConstructorHelpers.h"
 #include "PaperFlipbookComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Player/DMSharedController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PaperZDAnimInstance.h"
+#include "Game/DMGameModeBase.h"
+#include "Player/DMFollowingCamera.h"
+#include "Engine/OverlapResult.h"
+
 
 
 ADMPlayer2P::ADMPlayer2P()
@@ -25,16 +29,32 @@ ADMPlayer2P::ADMPlayer2P()
 void ADMPlayer2P::BeginPlay()
 {
 	Super::BeginPlay();
-	ADMSharedController* PC = Cast<ADMSharedController>(GetWorld()->GetFirstPlayerController());
-	if (PC && PC->GetPawn())
+	
+	AGameModeBase* GM = GetWorld()->GetAuthGameMode();
+	if (GM)
 	{
-		MyCam = PC->GetPawn()->FindComponentByClass<UCameraComponent>();
+		ADMGameModeBase* DMGM = Cast<ADMGameModeBase>(GM);
+		if (DMGM)
+		{
+			MyCam = DMGM->GetMainCamera();
+		}
 	}
+	
+	ADMSharedController* PC = Cast<ADMSharedController>(GetWorld()->GetFirstPlayerController());
 	if (PC)
 	{
+		PC->OnInputMoveStarted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = true; });
 		PC->OnInputMoveTriggered2PAction.AddUObject(this, &ADMPlayer2P::OnInputMoveTriggered);
-	}
+		PC->OnInputMoveCompleted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = false; });
 
+		PC->OnInputAttackStarted2PAction.AddLambda([this](const FInputActionValue&)->void {
+			if (!bIsAttacking)
+			{
+				GetAnimInstance()->JumpToNode("AttackJump");
+				bIsAttacking = true;
+			}
+		});
+	}	
 }
 
 void ADMPlayer2P::Tick(float DeltaTime)
@@ -42,7 +62,7 @@ void ADMPlayer2P::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (MyCam)
 	{
-		FVector CamLocation = MyCam->GetComponentLocation();
+		FVector CamLocation = MyCam->GetActorLocation();
 		FVector CurLocation = GetActorLocation();
 		float Width = 1900.0f;
 		float Height = 960.0f;
@@ -66,15 +86,13 @@ void ADMPlayer2P::OnInputMoveTriggered(const FInputActionValue& Value)
 {
 	FVector2D MoveVector = Value.Get<FVector2D>(); // ex) (1,0) (-1, 0) (0, 1) (0, -1)
 
-	FVector ForwardDirection = GetActorForwardVector() * MoveVector.X;
-	FVector UpDirection = GetActorUpVector() * MoveVector.Y;
-	FVector MoveDirection = ForwardDirection + UpDirection;
+	FVector MoveDirection = FVector(MoveVector.X, 0.0f, MoveVector.Y);
 
 	const float Width = 1900.0f;
 	const float Height = 960.0f;
 
 	FVector CurLocation = GetActorLocation();
-	FVector ScreenCenter = MyCam->GetComponentLocation();
+	FVector ScreenCenter = MyCam->GetActorLocation();
 
 	float MinX = ScreenCenter.X - Width * 0.5f;
 	float MaxX = ScreenCenter.X + Width * 0.5f;
@@ -98,6 +116,45 @@ void ADMPlayer2P::OnInputMoveTriggered(const FInputActionValue& Value)
 	if (MoveDirection.X == 0.0f)
 		return;
 
-	float Yaw = (MoveDirection.X < 0.f) ? 0.f : 180.f;
-	GetSprite()->SetRelativeRotation(FRotator(0.f, Yaw, 0.f));
+	float Yaw = (MoveDirection.X < 0.0f) ? 0.0f : 180.0f;
+
+	SetActorRotation(FRotator(0.0f, Yaw, 0.0f));
+}
+
+void ADMPlayer2P::Attack()
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	const FVector LocalOffset(-40.0f, 0.0f, 0.0f);
+	const FVector Center = GetActorLocation() + GetActorRotation().RotateVector(LocalOffset);
+
+	const FVector BoxExtent(50.0f, 30.0f, 20.0f);
+
+	TArray<FOverlapResult> Results;
+	bool bHit = GetWorld()->OverlapMultiByProfile(
+		Results,
+		Center,
+		GetActorRotation().Quaternion(),
+		TEXT("Player2P"),
+		FCollisionShape::MakeBox(BoxExtent)
+	);
+
+	for (const FOverlapResult& Result : Results)
+	{
+		AActor* HitActor = Result.GetActor();
+		if (HitActor && HitActor != this)
+		{
+			// Hit logic here
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
+			// Example: Apply damage or any other logic
+			// UGameplayStatics::ApplyDamage(HitActor, DamageAmount, GetController(), this, UDamageType::StaticClass());
+		}
+	}
+
+	
+	DrawDebugBox(World, Center, BoxExtent,
+		Owner->GetActorRotation().Quaternion(),
+		FColor::Red, false, 1.f, 0, 2.f);
+
 }

@@ -37,5 +37,4 @@
 		}
 		// 플레이어가 범위 밖에 있는 경우
 		// 예: 대기 상태 또는 Idle 애니메이션 재생 등
-		UE_LOG(LogTemp, Warning, TEXT("Player Out of Range"));
 	}
