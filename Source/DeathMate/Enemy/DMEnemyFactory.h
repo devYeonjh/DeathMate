@@ -8,30 +8,6 @@
 
 class ADMEnemyActor;
 
-USTRUCT(BlueprintType)
-struct FEnemySpawnData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ADMEnemyActor> EnemyClass;
-
-	UPROPERTY(EditAnywhere)
-	float DelayTime = 1.5f;
-
-	float CurrentTime = 0.f;
-
-};
-
-USTRUCT()
-struct FPendingRespawnData
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-
-	TSubclassOf<ADMEnemyActor> EnemyClass;
-};
 
 UCLASS()
 class DEATHMATE_API ADMEnemyFactory : public AActor
@@ -46,11 +22,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
 	UPROPERTY(EditAnywhere)
-	TArray<FEnemySpawnData> EnemySpawnList;
+	TSubclassOf<ADMEnemyActor> EnemyClass;
+
+	UPROPERTY(EditAnywhere)
+	float DelayTime = 1.5f;
 
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn")
 	int32 MaxSpawnCount = 3;
@@ -60,13 +37,14 @@ public:
 
 	// 현재 살아있는 적 개수
 	int32 CurrentAliveEnemyCount = 0;
-
-	void SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, float MoveSpeed);
-	void NotifyEnemyDestroyed(TSubclassOf<ADMEnemyActor> DestroyedEnemyClass);
-	void HandleRespawn();
+	
 
 private:
-	TArray<FPendingRespawnData> PendingRespawnList;
 	FTimerHandle RespawnTimerHandle;
-	
+
+	UFUNCTION()
+	void SpawnEnemy();
+
+	UFUNCTION()
+	void TryScheduleSpawn();
 };
