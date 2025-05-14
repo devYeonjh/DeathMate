@@ -32,6 +32,7 @@ ADMPlayer2P::ADMPlayer2P()
 	MoveComp->DefaultLandMovementMode = EMovementMode::MOVE_Flying;
 	MoveComp->MaxFlySpeed = 600.f;
 	MoveComp->BrakingDecelerationFlying = 100.f;
+	MoveComp->MaxAcceleration = 4096.f;
 
 	GetCapsuleComponent()->SetCapsuleRadius(28.f);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(38.f);

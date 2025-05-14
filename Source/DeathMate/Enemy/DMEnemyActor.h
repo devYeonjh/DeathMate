@@ -33,10 +33,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed;
-	void SetMoveSpeed(float NewSpeed);
-
-	UPROPERTY(EditAnywhere, Category="Enemy")
-	float LifeTime = 10.f;
 
 	UPROPERTY(EditAnywhere)
 	class ADMEnemyFactory* OwnerFactory;
