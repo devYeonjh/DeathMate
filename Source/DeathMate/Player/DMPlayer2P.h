@@ -11,6 +11,9 @@ class UInputAction;
 class UPaperFlipbook;
 class APaperFlipbookActor;
 class ADMFollowingCamera;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHPChangedDelegate, float);
+
 /**
  * 
  */
@@ -43,9 +46,31 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void Attack();
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|VFX")
 	TSubclassOf<APaperFlipbookActor> AttackFlipbookActorClass;
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|VFX")
 	UPaperFlipbook* AttackFlipbookAsset;
 
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Stats")
+	float MaxHP = 100.f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Stats")
+	float CurrentHP;
+
+	UPROPERTY(EditAnywhere, Category = "Stats")
+	float HPDecreaseInterval = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Stats")
+	float DamagePerTick = 1.f;
+
+	FTimerHandle HPTimerHandle;
+public:
+	void SetHP(float NewHealth);
+	FORCEINLINE float GetHP() const { return CurrentHP; }
+	FORCEINLINE float GetMaxHP() const { return MaxHP; }
+
+	FOnHPChangedDelegate OnHPChanged;
 };

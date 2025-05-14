@@ -10,6 +10,7 @@ class UInputMappingContext;
 class UInputComponent;
 class UEnhancedInputComponent;
 class UCharacterMovementComponent;
+class ADMGameModeBase;
 
 /**
  * 
@@ -33,6 +34,8 @@ protected:
 	bool bIsRunning = false;
 	
 	UCharacterMovementComponent* MoveComp;
+	ADMGameModeBase* DMGM;
+
 
 private:
 	UInputMappingContext* IMC_PlayerInput;
