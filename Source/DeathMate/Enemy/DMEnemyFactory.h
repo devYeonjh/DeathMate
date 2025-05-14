@@ -26,25 +26,31 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ADMEnemyActor> EnemyClass;
 
-	UPROPERTY(EditAnywhere)
-	float DelayTime = 1.5f;
-
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn")
 	int32 MaxSpawnCount = 3;
 
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn")
 	float RespawnCooldown = 3.0f;
 
-	// 현재 살아있는 적 개수
-	int32 CurrentAliveEnemyCount = 0;
+	UPROPERTY(EditAnywhere, Category = "Enemy Spawn")
+	float MoveSpeed = 500.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy Spawn")
+	float AI = 0.f;
 	
 
 private:
 	FTimerHandle RespawnTimerHandle;
 
+	// 현재 살아있는 적 개수
+	int32 CurrentAliveEnemyCount = 0;
+	
 	UFUNCTION()
 	void SpawnEnemy();
 
 	UFUNCTION()
 	void TryScheduleSpawn();
+
+	UFUNCTION()
+	void EnemyHandleDeath();
 };

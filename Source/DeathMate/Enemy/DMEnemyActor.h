@@ -34,9 +34,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed;
 
-	UPROPERTY(EditAnywhere)
-	class ADMEnemyFactory* OwnerFactory;
-	void SetOwnerFactory(ADMEnemyFactory* Factory) { OwnerFactory = Factory; }
+	FORCEINLINE void SetMoveSpeed(float NewSpeed) { MoveSpeed = NewSpeed; }
 
 	UFUNCTION()
 	void OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

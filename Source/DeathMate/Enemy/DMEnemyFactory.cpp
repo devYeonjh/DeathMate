@@ -2,6 +2,7 @@
 
 
 #include "Enemy/DMEnemyFactory.h"
+#include "Enemy/Type/DMFlyEnemy.h"
 #include "DMEnemyActor.h"
 
 
@@ -18,11 +19,20 @@ void ADMEnemyFactory::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 초기 적 소환(MaxSpawnCount 만큼)
-	//if (CurrentAliveEnemyCount < MaxSpawnCount)
-	//{
-	//	SpawnEnemy();
-	//}
+	for (int i = 0; i < MaxSpawnCount; i++)
+	{
+		ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, GetActorLocation() + FVector(i*50, 0.f, 0.f) /*임시*/, GetActorRotation());
+		if (SpawnedEnemy)
+		{
+			++CurrentAliveEnemyCount;
+			SpawnedEnemy->SetMoveSpeed(MoveSpeed);
+			SpawnedEnemy->OnEnemyDieAction.AddUObject(this, &ADMEnemyFactory::EnemyHandleDeath);
+		}
+		if (ADMFlyEnemy* FlyEnemy = Cast<ADMFlyEnemy>(SpawnedEnemy))
+		{
+			FlyEnemy->DetectionRange = AI; //임시
+		}
+	}
 
 	TryScheduleSpawn();
 }
@@ -40,27 +50,23 @@ void ADMEnemyFactory::SpawnEnemy()
 	if (SpawnedEnemy)
 	{
 		++CurrentAliveEnemyCount;
-		UE_LOG(LogTemp, Warning, TEXT("CurrentAliveEnemyCount: %d"), CurrentAliveEnemyCount);
-		SpawnedEnemy->SetOwnerFactory(this);
-		SpawnedEnemy->OnEnemyDieAction.AddLambda([this]()->void
-			{
-				CurrentAliveEnemyCount = FMath::Max(0, CurrentAliveEnemyCount - 1);
-				UE_LOG(LogTemp, Warning, TEXT("CurrentAliveEnemyCount: %d"), CurrentAliveEnemyCount);
-				TryScheduleSpawn();
-			}
-		);
+		SpawnedEnemy->SetMoveSpeed(MoveSpeed);
+		SpawnedEnemy->OnEnemyDieAction.AddUObject(this, &ADMEnemyFactory::EnemyHandleDeath);
 	}
-	// 적이 소환된 후 RespawnCooldown 시간 후에 다시 소환 시도
-	if (CurrentAliveEnemyCount < MaxSpawnCount)
+
+	if (RespawnCooldown > 0) //리스폰 쿨타임이 있는경우에만 추가 생성시도 없는경우 영원히 리스폰되지않음
 	{
+		//  다시 생성 시도
 		TryScheduleSpawn();
 	}
 }
 
 void ADMEnemyFactory::TryScheduleSpawn()
 {
+	// 최대 스폰 카운트 이상이면 생성하지않음
 	if (CurrentAliveEnemyCount >= MaxSpawnCount) return;
 
+	//RespawnCooldown 이후에 SpawnEnemy를 통해 Enemy생성
 	GetWorldTimerManager().SetTimer(
 		RespawnTimerHandle,
 		this,
@@ -69,5 +75,14 @@ void ADMEnemyFactory::TryScheduleSpawn()
 		false
 	);
 
+}
+
+void ADMEnemyFactory::EnemyHandleDeath()
+{
+	bool bIsFull = CurrentAliveEnemyCount == MaxSpawnCount;
+	CurrentAliveEnemyCount = FMath::Max(0, CurrentAliveEnemyCount - 1);
+
+	if (bIsFull)
+		TryScheduleSpawn();
 }
 
