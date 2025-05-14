@@ -1,8 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/DMPlayer1P.h"
+#include "Enemy/DMEnemyActor.h"
+#include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "PaperFlipbookActor.h"
 #include "UObject/ConstructorHelpers.h"
 #include "PaperFlipbookComponent.h"
+#include "PaperFlipbook.h"
 #include "Player/DMSharedController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -59,14 +64,16 @@ void ADMPlayer1P::OnPlayer1POverlap(UPrimitiveComponent* OverlappedComponent, AA
 		ADMPlayer2P* Player2P = Cast<ADMPlayer2P>(OtherActor);
 		if (Player2P)
 		{
-			DMGM->RespawnAtCheckpoint();
+			HandleDamage();
+
 		}
 	}
+
 }
 
 void ADMPlayer1P::TakeDamage()
 {
-	DMGM->RespawnAtCheckpoint();
+	HandleDamage();
 }
 
 void ADMPlayer1P::RespawnAction(const FVector& Checkpoint)
@@ -76,4 +83,67 @@ void ADMPlayer1P::RespawnAction(const FVector& Checkpoint)
 	Super::RespawnAction(Checkpoint);
 }
 
+void ADMPlayer1P::HandleDamage()
+{
+	//죽은 직후 무적 상태 진입
+	SetCanBeDamaged(false);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// 1) 입력 잠그기
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		PC->DisableInput(PC);
 
+	// 2) 이동 잠그기
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+
+	// 3) 플립북 연출 스폰
+	if (DeathFlipbookActorClass && DeathFlipbookAsset)
+	{
+		FActorSpawnParameters Params;
+		Params.Owner = this;
+		APaperFlipbookActor* FB = GetWorld()->SpawnActor<APaperFlipbookActor>(
+			DeathFlipbookActorClass,
+			GetActorLocation(),
+			FRotator::ZeroRotator,
+			Params
+		);
+		if (FB)
+		{
+			auto* FBComp = FB->GetRenderComponent();
+			FBComp->SetFlipbook(DeathFlipbookAsset);
+			FBComp->PlayFromStart();
+			// 자동 파괴 타이머
+			float SeqLen = FBComp->GetFlipbookLength();
+			FTimerHandle Tmp;
+			GetWorld()->GetTimerManager().SetTimer(Tmp,[FB]() { FB->Destroy(); },SeqLen,false);
+		}
+	}
+
+	// 4) 숨김
+	SetActorHiddenInGame(true);
+
+	// 5) 일정 시간 후 리스폰 콜백
+	// FlipbookLength 혹은 임의 Delay
+	float DelayTime = 1.5f;  // 원하는 딜레이 시간(초)으로 설정
+	GetWorld()->GetTimerManager().SetTimer(DeathSequenceHandle,this,&ADMPlayer1P::FinishDeathSequence,DelayTime,false);
+}
+
+void ADMPlayer1P::FinishDeathSequence()
+{
+	// 1) 리스폰
+	if (DMGM)
+		DMGM->RespawnAtCheckpoint();
+
+	// 2) 보이기
+	SetActorHiddenInGame(false);
+
+	// 3) 이동 복구
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	// 4) 입력 복구
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		PC->EnableInput(PC);
+	//무적 해제
+	SetCanBeDamaged(true);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+}
