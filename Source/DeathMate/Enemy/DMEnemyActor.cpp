@@ -2,6 +2,7 @@
 
 
 #include "Enemy/DMEnemyActor.h"
+#include "Enemy/DMEnemyFactory.h"
 #include "Game/DMGameModeBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -80,6 +81,8 @@ void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 void ADMEnemyActor::TakeDamage()
 {
 	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"));
+
+	OnEnemyDieAction.Broadcast();
 	Destroy();
 }
 

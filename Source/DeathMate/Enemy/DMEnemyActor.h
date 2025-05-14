@@ -7,6 +7,7 @@
 #include "Interface/DMDamagedActor.h"
 #include "DMEnemyActor.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnEnemyDieDelegate);
 
 UCLASS(Abstract)
 class DEATHMATE_API ADMEnemyActor : public ADMPaperActorBase, public IDMDamagedActor
@@ -37,11 +38,16 @@ public:
 	UPROPERTY(EditAnywhere, Category="Enemy")
 	float LifeTime = 10.f;
 
+	UPROPERTY(EditAnywhere)
+	class ADMEnemyFactory* OwnerFactory;
+	void SetOwnerFactory(ADMEnemyFactory* Factory) { OwnerFactory = Factory; }
+
 	UFUNCTION()
 	void OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void TakeDamage() override;
 
+	FOnEnemyDieDelegate OnEnemyDieAction;
 
 private:
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
