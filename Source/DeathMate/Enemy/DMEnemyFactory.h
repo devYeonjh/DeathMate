@@ -6,19 +6,31 @@
 #include "GameFramework/Actor.h"
 #include "DMEnemyFactory.generated.h"
 
+class ADMEnemyActor;
+
 USTRUCT(BlueprintType)
 struct FEnemySpawnData
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ADMEnemyActor> EnemyClass;
+	TSubclassOf<ADMEnemyActor> EnemyClass;
 
 	UPROPERTY(EditAnywhere)
 	float DelayTime = 1.5f;
 
 	float CurrentTime = 0.f;
 
+};
+
+USTRUCT()
+struct FPendingRespawnData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+
+	TSubclassOf<ADMEnemyActor> EnemyClass;
 };
 
 UCLASS()
@@ -40,7 +52,21 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FEnemySpawnData> EnemySpawnList;
 
-public:
-	void SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, float MoveSpeed);
+	UPROPERTY(EditAnywhere, Category="Enemy Spawn")
+	int32 MaxSpawnCount = 3;
 
+	UPROPERTY(EditAnywhere, Category="Enemy Spawn")
+	float RespawnCooldown = 3.0f;
+
+	// 현재 살아있는 적 개수
+	int32 CurrentAliveEnemyCount = 0;
+
+	void SpawnEnemy(TSubclassOf<ADMEnemyActor> EnemyClassToSpawn, float MoveSpeed);
+	void NotifyEnemyDestroyed(TSubclassOf<ADMEnemyActor> DestroyedEnemyClass);
+	void HandleRespawn();
+
+private:
+	TArray<FPendingRespawnData> PendingRespawnList;
+	FTimerHandle RespawnTimerHandle;
+	
 };
