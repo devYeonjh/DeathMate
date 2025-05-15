@@ -18,9 +18,13 @@ ADMEnemyActor::ADMEnemyActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	BoxComp->SetBoxExtent(FVector(50.f, 50.f, 50.f)); // 충돌 박스의 크기 설정
+	//BoxComp->SetBoxExtent(FVector(50.f, 50.f, 50.f)); // 충돌 박스의 크기 설정
 
-	BoxComp->SetCollisionProfileName(TEXT("Enemy")); // 충돌 프로필 설정
+	//BoxComp->SetCollisionProfileName(TEXT("Enemy")); // 충돌 프로필 설정
+
+	FlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComp"));
+	FlipbookComp->SetupAttachment(RootComponent);
+	FlipbookComp->SetCollisionProfileName(TEXT("Enemy"));;
 }
 
 // Called when the game starts or when spawned
@@ -28,18 +32,23 @@ void ADMEnemyActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADMEnemyActor::OnEnemyOverlap);
+	FlipbookComp->OnComponentBeginOverlap.AddDynamic(this, &ADMEnemyActor::OnEnemyOverlap);
+	//BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADMEnemyActor::OnEnemyOverlap);
 }
 
 void ADMEnemyActor::SetActorLocation2D(FVector Pos)
 {
 	float CurX = GetActorLocation().X;
 
-	FVector Dir = CurX < Pos.X ? FVector(1.f, 1.f, 1.f) : FVector(-1.f, 1.f, 1.f);
+	//FVector Dir = CurX < Pos.X ? FVector(1.f, 1.f, 1.f) : FVector(-1.f, 1.f, 1.f);
+	FVector Dir = CurX < Pos.X ? GetActorRelativeScale3D() : GetActorRelativeScale3D() * FVector(-1.f, 1.f, 1.f);
 
+	
 	if (FlipbookComp)
 	{
-		FlipbookComp->SetRelativeScale3D(Dir);
+		//FlipbookComp->SetRelativeScale3D(Dir);
+		float Yaw = (CurX < Pos.X) ? 0.f : 180.f;
+		SetActorRotation(FRotator(0.f, Yaw, 0.f));
 	}
 
 	SetActorLocation(Pos);
