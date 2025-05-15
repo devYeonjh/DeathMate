@@ -21,7 +21,7 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "Trigger")
 	void TriggerEvent();
+	
+	
 
-	
-	
 };
