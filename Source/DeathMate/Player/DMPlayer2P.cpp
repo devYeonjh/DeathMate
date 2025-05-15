@@ -198,12 +198,13 @@ void ADMPlayer2P::Attack()
 		Results,
 		Center,
 		GetActorRotation().Quaternion(),
-		TEXT("Player2P"),
+		TEXT("Player2PAttack"),
 		FCollisionShape::MakeBox(BoxExtent)
 	);
 
 	for (const FOverlapResult& Result : Results)
 	{
+		
 		AActor* HitActor = Result.GetActor();
 		if (HitActor && HitActor != this)
 		{

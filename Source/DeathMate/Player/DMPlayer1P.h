@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Player/DMPlayerBase.h"
 #include "InputActionValue.h"
+#include "PaperFlipbookActor.h"
 #include "Interface/DMDamagedActor.h"
 #include "DMPlayer1P.generated.h"
 
@@ -35,4 +36,19 @@ private:
 
 public:
 	virtual void TakeDamage() override;
+
+	// 데미지 처리 진입점
+	UFUNCTION()
+	void HandleDamage();
+
+	// 데미지 시퀀스 완료 후 호출될 콜백
+	void FinishDeathSequence();
+
+	// 타이머 핸들
+	FTimerHandle DeathSequenceHandle;
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	TSubclassOf<APaperFlipbookActor> DeathFlipbookActorClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UPaperFlipbook* DeathFlipbookAsset;
 };
