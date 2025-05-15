@@ -21,8 +21,6 @@ void ADMTrigger1PBase::BeginPlay()
 
 void ADMTrigger1PBase::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player Overlapped Trigger"));
-
 	TriggerEvent(OtherActor);
 }
 

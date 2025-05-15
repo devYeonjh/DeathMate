@@ -2,6 +2,8 @@
 
 
 #include "Player/DMPlayer2P.h"
+#include "DMPlayer1P.h"
+#include "Trigger/DMTrigger2PBase.h"
 #include "UObject/ConstructorHelpers.h"
 #include "PaperFlipbookActor.h"
 #include "PaperFlipbookComponent.h"
@@ -9,6 +11,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PaperZDAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Game/DMGameModeBase.h"
 #include "Player/DMFollowingCamera.h"
 #include "Engine/OverlapResult.h"
@@ -198,12 +201,17 @@ void ADMPlayer2P::Attack()
 		Results,
 		Center,
 		GetActorRotation().Quaternion(),
-		TEXT("Player2P"),
+		TEXT("Player2PAttack"),
 		FCollisionShape::MakeBox(BoxExtent)
 	);
 
 	for (const FOverlapResult& Result : Results)
 	{
+		if (ADMTrigger2PBase* Switch = Cast<ADMTrigger2PBase>(Result.GetActor()))
+		{
+			Switch->TriggerEvent(Result.GetActor());
+		}
+
 		AActor* HitActor = Result.GetActor();
 		if (HitActor && HitActor != this)
 		{
