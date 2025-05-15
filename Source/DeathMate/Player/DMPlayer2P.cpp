@@ -35,15 +35,20 @@ ADMPlayer2P::ADMPlayer2P()
 	MoveComp->DefaultLandMovementMode = EMovementMode::MOVE_Flying;
 	MoveComp->MaxFlySpeed = 600.f;
 	MoveComp->BrakingDecelerationFlying = 100.f;
+	MoveComp->MaxAcceleration = 4096.f;
+
+	GetCapsuleComponent()->SetCapsuleRadius(28.f);
+	GetCapsuleComponent()->SetCapsuleHalfHeight(38.f);
 }
 
 void ADMPlayer2P::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//카메라 설정, 리스폰 델리게이트 바인딩
 	if (AGameModeBase* GM = GetWorld()->GetAuthGameMode())
 	{
-		ADMGameModeBase* DMGM = Cast<ADMGameModeBase>(GM);
+		DMGM = Cast<ADMGameModeBase>(GM);
 		if (DMGM)
 		{
 			MyCam = DMGM->GetMainCamera();
@@ -51,6 +56,7 @@ void ADMPlayer2P::BeginPlay()
 		}
 	}
 	
+	//인풋 델리게이트 바인딩
 	ADMSharedController* PC = Cast<ADMSharedController>(GetWorld()->GetFirstPlayerController());
 	if (PC)
 	{
@@ -66,6 +72,17 @@ void ADMPlayer2P::BeginPlay()
 			}
 		});
 	}	
+
+	SetHP(MaxHP);
+	GetWorldTimerManager().SetTimer(
+		HPTimerHandle,
+		[this]()
+		{
+			SetHP(CurrentHP - DamagePerTick);
+		},
+		HPDecreaseInterval,
+		true
+	);
 }
 
 //카메라 크기에 맞게이동 제한
@@ -220,5 +237,16 @@ void ADMPlayer2P::Attack()
 				}
 			}
 		}
+	}
+}
+
+void ADMPlayer2P::SetHP(float NewHP)
+{
+	CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
+	//OnHPChanged.Broadcast(CurrentHP);
+	if (CurrentHP <= 0.f)
+	{
+		DMGM->RespawnAtCheckpoint();
+		SetHP(MaxHP);
 	}
 }
