@@ -5,7 +5,6 @@
 #include "Enemy/Type/DMFlyEnemy.h"
 #include "DMEnemyActor.h"
 
-
 // Sets default values
 ADMEnemyFactory::ADMEnemyFactory()
 {
@@ -21,16 +20,11 @@ void ADMEnemyFactory::BeginPlay()
 
 	for (int i = 0; i < MaxSpawnCount; i++)
 	{
-		ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, GetActorLocation() + FVector(i*50, 0.f, 0.f) /*임시*/, GetActorRotation());
+		ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, GetActorLocation() + (SpawnOffset * i), GetActorRotation());
 		if (SpawnedEnemy)
 		{
 			++CurrentAliveEnemyCount;
-			SpawnedEnemy->SetMoveSpeed(MoveSpeed);
-			SpawnedEnemy->OnEnemyDieAction.AddUObject(this, &ADMEnemyFactory::EnemyHandleDeath);
-		}
-		if (ADMFlyEnemy* FlyEnemy = Cast<ADMFlyEnemy>(SpawnedEnemy))
-		{
-			FlyEnemy->DetectionRange = AI; //임시
+			SettingEnemy(SpawnedEnemy);
 		}
 	}
 
@@ -50,8 +44,7 @@ void ADMEnemyFactory::SpawnEnemy()
 	if (SpawnedEnemy)
 	{
 		++CurrentAliveEnemyCount;
-		SpawnedEnemy->SetMoveSpeed(MoveSpeed);
-		SpawnedEnemy->OnEnemyDieAction.AddUObject(this, &ADMEnemyFactory::EnemyHandleDeath);
+		SettingEnemy(SpawnedEnemy);
 	}
 
 	if (RespawnCooldown > 0) //리스폰 쿨타임이 있는경우에만 추가 생성시도 없는경우 영원히 리스폰되지않음
@@ -84,5 +77,11 @@ void ADMEnemyFactory::EnemyHandleDeath()
 
 	if (bIsFull)
 		TryScheduleSpawn();
+}
+
+void ADMEnemyFactory::SettingEnemy(ADMEnemyActor* SpawnedEnemy)
+{
+	SpawnedEnemy->SetMoveSpeed(MoveSpeed);
+	SpawnedEnemy->OnEnemyDieAction.AddUObject(this, &ADMEnemyFactory::EnemyHandleDeath);
 }
 

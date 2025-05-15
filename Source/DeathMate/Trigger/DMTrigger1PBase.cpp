@@ -6,6 +6,9 @@
 
 ADMTrigger1PBase::ADMTrigger1PBase()
 {
+	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
+	SetRootComponent(BoxComp);
+
 	BoxComp->SetCollisionProfileName(TEXT("Trigger1P"));
 }
 

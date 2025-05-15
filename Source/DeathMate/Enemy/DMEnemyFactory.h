@@ -36,7 +36,7 @@ public:
 	float MoveSpeed = 500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy Spawn")
-	float AI = 0.f;
+	FVector SpawnOffset = FVector(0.f, 0.f, 0.f);
 	
 
 private:
@@ -53,4 +53,7 @@ private:
 
 	UFUNCTION()
 	void EnemyHandleDeath();
+
+protected:
+	virtual void SettingEnemy(ADMEnemyActor* SpawnedEnemy);
 };
