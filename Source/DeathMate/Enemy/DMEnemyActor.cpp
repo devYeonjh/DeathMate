@@ -84,6 +84,10 @@ void ADMEnemyActor::TakeDamage()
 	OnEnemyDieAction.Broadcast();
 	OnEnemyDieAction.Clear();
 	Destroy();
+	if (DamageSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
+	}
 }
 
 
