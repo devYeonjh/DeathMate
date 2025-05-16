@@ -51,4 +51,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	UPaperFlipbook* DeathFlipbookAsset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* JumpSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* DieSound;
+	virtual void Jump() override;
 };

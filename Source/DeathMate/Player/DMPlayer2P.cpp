@@ -66,12 +66,15 @@ void ADMPlayer2P::BeginPlay()
 		PC->OnInputMoveStarted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = true; });
 		PC->OnInputMoveTriggered2PAction.AddUObject(this, &ADMPlayer2P::OnInputMoveTriggered);
 		PC->OnInputMoveCompleted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = false; });
-
 		PC->OnInputAttackStarted2PAction.AddLambda([this](const FInputActionValue&)->void {
 			if (!bIsAttacking)
 			{
 				GetAnimInstance()->JumpToNode("AttackJump");
 				bIsAttacking = true;
+				if (AttackSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+				}
 			}
 		});
 	}	

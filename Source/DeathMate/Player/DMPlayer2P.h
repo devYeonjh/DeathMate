@@ -79,4 +79,8 @@ public:
 	FORCEINLINE float GetMaxHP() const { return MaxHP; }
 
 	FOnHPChangedDelegate OnHPChanged;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* AttackSound;
+
 };

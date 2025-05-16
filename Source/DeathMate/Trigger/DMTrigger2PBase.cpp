@@ -10,6 +10,8 @@ ADMTrigger2PBase::ADMTrigger2PBase()
 	SetRootComponent(BoxComp);
 
 	BoxComp->SetCollisionProfileName(TEXT("Trigger2P"));
+	
+
 }
 
 void ADMTrigger2PBase::BeginPlay()

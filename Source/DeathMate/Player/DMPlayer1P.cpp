@@ -86,6 +86,10 @@ void ADMPlayer1P::RespawnAction(const FVector& Checkpoint)
 void ADMPlayer1P::HandleDamage()
 {
 	//죽은 직후 무적 상태 진입
+	if (DieSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DieSound, GetActorLocation());
+	}
 	SetCanBeDamaged(false);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	// 1) 입력 잠그기
@@ -146,4 +150,14 @@ void ADMPlayer1P::FinishDeathSequence()
 	SetCanBeDamaged(true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
+}
+void ADMPlayer1P::Jump()
+{
+	Super::Jump();
+
+	// JumpSound 가 에디터에서 지정돼 있으면 재생
+	if (JumpSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, JumpSound, GetActorLocation());
+	}
 }
