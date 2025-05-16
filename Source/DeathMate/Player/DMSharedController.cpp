@@ -9,6 +9,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Player/DMPlayerBase.h"
 
+#include "Blueprint/UserWidget.h"
+#include "UI/HpBarWidget.h"
 
 ADMSharedController::ADMSharedController()
 {
@@ -31,6 +33,17 @@ void ADMSharedController::BeginPlay()
 			PauseMenuInstance->AddToViewport();
 
 			PauseMenuInstance->ResumeGame();
+		}
+	}
+
+	if (HpBarWidgetClass)
+	{
+		// this(PlayerController) 가 WorldContext 역할
+		HpBarWidgetInstance = CreateWidget<UHpBarWidget>(this, HpBarWidgetClass);
+		if (HpBarWidgetInstance)
+		{
+			HpBarWidgetInstance->AddToViewport();
+			// 옵션: ZOrder 지정하려면 AddToViewport(최댓값, ZOrder);
 		}
 	}
 }

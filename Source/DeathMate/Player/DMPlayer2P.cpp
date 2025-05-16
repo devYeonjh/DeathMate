@@ -247,7 +247,7 @@ void ADMPlayer2P::Attack()
 void ADMPlayer2P::SetHP(float NewHP)
 {
 	CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
-	//OnHPChanged.Broadcast(CurrentHP);
+	OnHPChanged.Broadcast(CurrentHP/MaxHP);
 	if (CurrentHP <= 0.f)
 	{
 		DMGM->RespawnAtCheckpoint();
