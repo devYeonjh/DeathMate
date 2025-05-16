@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
-void ADMFlyEnemy::Move()
+void ADMFlyEnemy::Move(float DeltaTime)
 {
 	// 플레이어 위치 가져오기
 	APawn* PlayerCharacter = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -29,7 +29,7 @@ void ADMFlyEnemy::Move()
 		DirectionToPlayer.Z += 50.f;
 		DirectionToPlayer.Normalize();
 
-		FVector Velocity = DirectionToPlayer * MoveSpeed * GetWorld()->GetDeltaSeconds();
+		FVector Velocity = DirectionToPlayer * MoveSpeed * DeltaTime;
 
 		FVector NewLocation = EnemyLocation + Velocity;
 

@@ -7,7 +7,8 @@
 ADMTrigger2PBase::ADMTrigger2PBase()
 {
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
-	RootComponent = BoxComp;
+	SetRootComponent(BoxComp);
+
 	BoxComp->SetCollisionProfileName(TEXT("Trigger2P"));
 	
 

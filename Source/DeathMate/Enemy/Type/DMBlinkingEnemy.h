@@ -16,7 +16,7 @@ class DEATHMATE_API ADMBlinkingEnemy : public ADMEnemyActor
 	
 protected:
 	virtual void BeginPlay() override;
-	virtual void Move() override;
+	virtual void Move(float DeltaTime) override;
 	void UpdateVisibility(float DeltaTime);
 
 private:

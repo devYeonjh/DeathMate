@@ -3,16 +3,35 @@
 
 #include "Enemy/Type/DMGroundEnemy.h"
 #include "DrawDebugHelpers.h"
+#include "PaperFlipbookComponent.h"
+#include "TimerManager.h"
 
 void ADMGroundEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
 	Direction = FVector(1, 0, 0); // 기본 X축 방향
+    bCanMove = false;
+
+    GetWorldTimerManager().SetTimer(
+        MovementEnableTimerHandle,
+        FTimerDelegate::CreateLambda([this]()
+            {
+                // 람다 안에서 원래 EnableMovement()의 역할을 수행
+                bCanMove = true;
+            }),
+        0.5f,   // 지연 시간
+        false         // 한 번만 실행
+    );
 }
 
-void ADMGroundEnemy::Move()
+void ADMGroundEnemy::Move(float DeltaTime)
 {
+	if (!bCanMove)
+	{
+		return;
+	}
+
 
 	FVector CurrentLocation = GetActorLocation();
 
@@ -38,8 +57,8 @@ void ADMGroundEnemy::Move()
 #if (WITH_EDITOR)
 	{
 		// 디버그 시각화(필요 시)
-		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 0.1f, 0, 1.f);
-		DrawDebugLine(GetWorld(), WallCheckStart, WallCheckEnd, FColor::Red, false, 0.1f, 0, 1.f);
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, -1.f, 0, 1.f);
+		DrawDebugLine(GetWorld(), WallCheckStart, WallCheckEnd, FColor::Red, false, -1.f, 0, 1.f);
 	}
 #endif
 
@@ -49,7 +68,7 @@ void ADMGroundEnemy::Move()
 		Direction *= -1.f;
 	}
 
-	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);
+	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * DeltaTime);
 	SetActorLocation2D(NewLocation);
 
 

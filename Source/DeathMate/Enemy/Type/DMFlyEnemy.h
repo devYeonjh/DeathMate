@@ -15,7 +15,7 @@ class DEATHMATE_API ADMFlyEnemy : public ADMEnemyActor
 	GENERATED_BODY()
 
 protected:
-	virtual void Move() override;
+	virtual void Move(float DeltaTime) override;
 	
 public:
 	// 감지 범위 설정
