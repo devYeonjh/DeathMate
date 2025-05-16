@@ -39,6 +39,7 @@ ADMPlayer2P::ADMPlayer2P()
 
 	GetCapsuleComponent()->SetCapsuleRadius(28.f);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(38.f);
+
 }
 
 void ADMPlayer2P::BeginPlay()
@@ -66,6 +67,7 @@ void ADMPlayer2P::BeginPlay()
 		PC->OnInputMoveStarted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = true; });
 		PC->OnInputMoveTriggered2PAction.AddUObject(this, &ADMPlayer2P::OnInputMoveTriggered);
 		PC->OnInputMoveCompleted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = false; });
+
 		PC->OnInputAttackStarted2PAction.AddLambda([this](const FInputActionValue&)->void {
 			if (!bIsAttacking)
 			{

@@ -13,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Game/DMGameModeBase.h"
 #include "Player/DMPlayer2P.h"
+#include "PaperZDAnimInstance.h"
 
 ADMPlayer1P::ADMPlayer1P()
 {
@@ -31,8 +32,22 @@ void ADMPlayer1P::BeginPlay()
 	//델리게이트 바인딩
 	if (PC)
 	{
+		PC->OnInputMoveStarted1PAction.AddLambda([this](const FInputActionValue& Value)->void { bIsRunning = true; });
 		PC->OnInputMoveTriggered1PAction.AddUObject(this, &ADMPlayer1P::OnInputMoveTriggered);
-		PC->OnInputJumpStarted1PAction.AddLambda([this](const FInputActionValue& Value)->void { Jump(); });
+		PC->OnInputMoveCompleted1PAction.AddLambda([this](const FInputActionValue& Value)->void { bIsRunning = false; });
+
+		PC->OnInputJumpStarted1PAction.AddLambda([this](const FInputActionValue& Value)->void 
+			{ 
+				// 점프 중이 아닐때만 실행
+				if (!bIsJumping)
+				{
+					bIsJumping = true; //점프 중 상태로 변경
+					if (JumpSound)
+						UGameplayStatics::PlaySoundAtLocation(this, JumpSound, GetActorLocation());
+					GetAnimInstance()->JumpToNode("JumpNode");
+					Jump();
+				}
+			});
 		PC->OnInputJumpCompleted1PAction.AddLambda([this](const FInputActionValue& Value)->void { StopJumping(); });
 	}
 	if (DMGM)
@@ -150,14 +165,4 @@ void ADMPlayer1P::FinishDeathSequence()
 	SetCanBeDamaged(true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-}
-void ADMPlayer1P::Jump()
-{
-	Super::Jump();
-
-	// JumpSound 가 에디터에서 지정돼 있으면 재생
-	if (JumpSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, JumpSound, GetActorLocation());
-	}
 }
