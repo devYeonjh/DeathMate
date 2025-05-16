@@ -10,11 +10,8 @@
 // Sets default values
 ADMPaperActorBase::ADMPaperActorBase()
 {
-	//BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
-	//SetRootComponent(BoxComp);
-
-	//FlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComp"));
-	//FlipbookComp->SetupAttachment(RootComponent);
+	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("RootScene"));
+	RootComponent = RootScene;
 }
 
 

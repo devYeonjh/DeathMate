@@ -18,9 +18,10 @@ void ADMEnemyFactory::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	for (int i = 0; i < MaxSpawnCount; i++)
 	{
-		ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, GetActorLocation() + (SpawnOffset * i), GetActorRotation());
+		ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, GetActorLocation() + SpawnOffset * i, GetActorRotation());
 		if (SpawnedEnemy)
 		{
 			++CurrentAliveEnemyCount;

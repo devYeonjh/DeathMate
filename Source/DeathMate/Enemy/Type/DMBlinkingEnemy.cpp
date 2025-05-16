@@ -18,7 +18,7 @@ void ADMBlinkingEnemy::BeginPlay()
 
 }
 
-void ADMBlinkingEnemy::Move()
+void ADMBlinkingEnemy::Move(float DeltaTime)
 {
 	FVector CurrentLocation = GetActorLocation();
 	float TraveledDistance = FVector::Dist(StartLocation, CurrentLocation);
@@ -36,9 +36,9 @@ void ADMBlinkingEnemy::Move()
 	{
 		Direction = -MoveDirection;
 	}
-	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * CurrentDeltaTime);
+	FVector NewLocation = CurrentLocation + (Direction * MoveSpeed * DeltaTime);
 	SetActorLocation2D(NewLocation);
-	UpdateVisibility(CurrentDeltaTime);
+	UpdateVisibility(DeltaTime);
 }
 
 void ADMBlinkingEnemy::UpdateVisibility(float DeltaTime)
