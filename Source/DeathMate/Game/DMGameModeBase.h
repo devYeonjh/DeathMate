@@ -49,6 +49,7 @@ private:
 
 private:
 	FVector Checkpoint;
+	FVector FirstCheckpoint;
 	ADMFollowingCamera* MainCamera;
 
 public:
@@ -57,6 +58,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Checkpoint")
 	void RespawnAtCheckpoint();
+
+	UFUNCTION(BlueprintCallable, Category = "Checkpoint")
+	void RespawnAtFirstCheckpoint();
 
 	FSpawnCheckPointDelegate SpawnCheckPointDelegate;
 

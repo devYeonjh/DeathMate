@@ -151,6 +151,8 @@ void ADMPlayer1P::FinishDeathSequence()
 	// 1) 리스폰
 	if (DMGM)
 		DMGM->RespawnAtCheckpoint();
+	bIsRunning = false;
+	bIsJumping = false;
 
 	// 2) 보이기
 	SetActorHiddenInGame(false);

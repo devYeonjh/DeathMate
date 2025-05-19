@@ -75,8 +75,6 @@ void ADMEnemyActor::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void ADMEnemyActor::TakeDamage()
 {
-	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"));
-
 	OnEnemyDieAction.Broadcast();
 	OnEnemyDieAction.Clear();
 	Destroy();

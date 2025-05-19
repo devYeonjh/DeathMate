@@ -25,6 +25,11 @@ void ADMSharedController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!IsLocalController())
+	{
+		return;
+	}
+
 	if (PauseMenuClass)
 	{
 		PauseMenuInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
@@ -39,13 +44,14 @@ void ADMSharedController::BeginPlay()
 	if (HpBarWidgetClass)
 	{
 		// this(PlayerController) 가 WorldContext 역할
-		HpBarWidgetInstance = CreateWidget<UHpBarWidget>(this, HpBarWidgetClass);
+		HpBarWidgetInstance = CreateWidget<UHpBarWidget>(GetWorld(), HpBarWidgetClass);
 		if (HpBarWidgetInstance)
 		{
 			HpBarWidgetInstance->AddToViewport();
 			// 옵션: ZOrder 지정하려면 AddToViewport(최댓값, ZOrder);
 		}
 	}
+
 }
 
 

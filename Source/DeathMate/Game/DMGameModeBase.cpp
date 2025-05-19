@@ -154,6 +154,7 @@ ADMPlayerBase* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerControl
 	if (PlayerIndex == 0)
 	{
 		SetCheckpoint(PlayerStart->GetActorLocation());
+		FirstCheckpoint = PlayerStart->GetActorLocation();
 	}
 
 	return PlayerPawn;
@@ -170,3 +171,9 @@ void ADMGameModeBase::RespawnAtCheckpoint()
 	SpawnCheckPointDelegate.Broadcast(Checkpoint);
 }
 
+//플레이어가 처음 생성된 위치로 리스폰
+void ADMGameModeBase::RespawnAtFirstCheckpoint()
+{
+	SetCheckpoint(FirstCheckpoint);
+	SpawnCheckPointDelegate.Broadcast(FirstCheckpoint);
+}

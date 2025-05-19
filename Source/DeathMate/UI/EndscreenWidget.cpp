@@ -27,8 +27,6 @@ void UEndscreenWidget::NativeConstruct()
 
 void UEndscreenWidget::OnExitClicked()
 {
-    RemoveFromParent();
-
     if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
     {
         PC->bShowMouseCursor = true;
@@ -44,4 +42,6 @@ void UEndscreenWidget::OnExitClicked()
             StartStage->AddToViewport(/*ZOrder=*/ 1);
         }
     }
+
+    RemoveFromParent();
 }

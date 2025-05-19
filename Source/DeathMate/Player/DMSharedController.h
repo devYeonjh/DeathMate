@@ -87,9 +87,9 @@ private:
 public:
 	virtual void SetupInputComponent() override;
 
-
 	UFUNCTION()
 	void HandlePause();
+
 
 
 public:
@@ -99,5 +99,6 @@ public:
 private:
 	UPROPERTY()
 	UHpBarWidget* HpBarWidgetInstance;
+
 	
 };
