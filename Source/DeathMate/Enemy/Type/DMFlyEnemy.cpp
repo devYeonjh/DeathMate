@@ -26,7 +26,7 @@ void ADMFlyEnemy::Move(float DeltaTime)
 	if (DistanceToPlayer <= DetectionRange)
 	{
 		FVector DirectionToPlayer = PlayerLocation - EnemyLocation;
-		DirectionToPlayer.Z += 50.f;
+		// DirectionToPlayer.Z += 50.f;
 		DirectionToPlayer.Normalize();
 
 		FVector Velocity = DirectionToPlayer * MoveSpeed * DeltaTime;
