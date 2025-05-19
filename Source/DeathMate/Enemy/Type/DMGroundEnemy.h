@@ -16,10 +16,13 @@ class DEATHMATE_API ADMGroundEnemy : public ADMEnemyActor
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Move() override;
+	virtual void Move(float DeltaTime) override;
 
 private:
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
 	bool bMovingForward = true;
+
+	bool bCanMove = false;
+	FTimerHandle MovementEnableTimerHandle;
 	
 };

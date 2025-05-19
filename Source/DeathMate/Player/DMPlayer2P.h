@@ -22,8 +22,10 @@ class DEATHMATE_API ADMPlayer2P : public ADMPlayerBase
 {
 	GENERATED_BODY()
 
+
 public:
 	ADMPlayer2P();
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,6 +34,9 @@ protected:
 
 private:
 	ADMFollowingCamera* MyCam;
+	UWorld* MyWorld;
+	const FVector LocalOffset = FVector(-40.f, 0.f, 0.f);
+	const FVector BoxExtent = FVector(50.f, 30.f, 40.f);
 
 	UFUNCTION()
 	void OnInputMoveTriggered(const FInputActionValue& Value);
@@ -39,6 +44,7 @@ private:
 private:
 	bool bIsAttacking = false;
 	bool bSkipClamp = false;
+
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -73,4 +79,8 @@ public:
 	FORCEINLINE float GetMaxHP() const { return MaxHP; }
 
 	FOnHPChangedDelegate OnHPChanged;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* AttackSound;
+
 };

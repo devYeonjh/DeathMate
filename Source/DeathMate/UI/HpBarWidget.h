@@ -23,9 +23,6 @@ protected:
 	UProgressBar* HPBar;
 
 private:
-	UPROPERTY()
-	ADMPlayer2P* Player2P;
-
 	UFUNCTION()
 	void UpdateHPBar(float NewHP);
 	

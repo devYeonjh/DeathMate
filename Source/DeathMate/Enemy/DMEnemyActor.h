@@ -22,11 +22,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void Move() PURE_VIRTUAL(ADMEnemyActor::Move, );
+	virtual void Move(float DeltaTime) PURE_VIRTUAL(ADMEnemyActor::Move, );
 	
 	void SetActorLocation2D(FVector Pos);
-	
-	float CurrentDeltaTime;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,7 +40,8 @@ public:
 	void TakeDamage() override;
 
 	FOnEnemyDieDelegate OnEnemyDieAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* DamageSound;
 private:
 	FVector Direction = FVector::ZeroVector; // 이동 방향 기본값 0, 0, 0
 	FVector StartLocation;

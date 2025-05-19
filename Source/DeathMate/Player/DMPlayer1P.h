@@ -33,9 +33,14 @@ private:
 	UFUNCTION()
 	void OnPlayer1POverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+private:
+	bool bIsJumping = false;
 
 public:
 	virtual void TakeDamage() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void SetJumpingFinished() { bIsJumping = false; }
 
 	// 데미지 처리 진입점
 	UFUNCTION()
@@ -51,4 +56,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	UPaperFlipbook* DeathFlipbookAsset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* JumpSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* DieSound;
 };

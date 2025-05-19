@@ -39,14 +39,18 @@ ADMPlayer2P::ADMPlayer2P()
 
 	GetCapsuleComponent()->SetCapsuleRadius(28.f);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(38.f);
+
 }
 
 void ADMPlayer2P::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MyWorld = GetWorld();
+
 	
 	//카메라 설정, 리스폰 델리게이트 바인딩
-	if (AGameModeBase* GM = GetWorld()->GetAuthGameMode())
+	if (AGameModeBase* GM = MyWorld->GetAuthGameMode())
 	{
 		DMGM = Cast<ADMGameModeBase>(GM);
 		if (DMGM)
@@ -57,7 +61,7 @@ void ADMPlayer2P::BeginPlay()
 	}
 	
 	//인풋 델리게이트 바인딩
-	ADMSharedController* PC = Cast<ADMSharedController>(GetWorld()->GetFirstPlayerController());
+	ADMSharedController* PC = Cast<ADMSharedController>(MyWorld->GetFirstPlayerController());
 	if (PC)
 	{
 		PC->OnInputMoveStarted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = true; });
@@ -69,6 +73,10 @@ void ADMPlayer2P::BeginPlay()
 			{
 				GetAnimInstance()->JumpToNode("AttackJump");
 				bIsAttacking = true;
+				if (AttackSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+				}
 			}
 		});
 	}	
@@ -116,7 +124,7 @@ void ADMPlayer2P::Tick(float DeltaTime)
 		FHitResult Hit;
 		FCollisionQueryParams Params(NAME_None, /*bTraceComplex=*/false, this);
 
-		bool bBlocked = GetWorld()->SweepSingleByChannel(
+		bool bBlocked = MyWorld->SweepSingleByChannel(
 				Hit,
 				CurLoc,
 				TargetLoc,
@@ -132,7 +140,7 @@ void ADMPlayer2P::Tick(float DeltaTime)
 		if (bBlocked)
 		{
 			// 지형에 박힌 걸 감지하면 체크포인트로 리스폰
-			if (auto* GM = Cast<ADMGameModeBase>(GetWorld()->GetAuthGameMode()))
+			if (auto* GM = Cast<ADMGameModeBase>(MyWorld->GetAuthGameMode()))
 			{
 				GM->RespawnAtCheckpoint();  // GameMode에서 브로드캐스트 → ADMPlayer2P::RespawnAction 호출 :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}
 			}
@@ -188,16 +196,10 @@ void ADMPlayer2P::OnInputMoveTriggered(const FInputActionValue& Value)
 
 void ADMPlayer2P::Attack()
 {
-	UWorld* World = GetWorld();
-	if (!World) return;
-
-	const FVector LocalOffset(-40.f, 0.f, 0.f);
 	const FVector Center = GetActorLocation() + GetActorRotation().RotateVector(LocalOffset);
 
-	const FVector BoxExtent(50.f, 30.f, 20.f);
-
 	TArray<FOverlapResult> Results;
-	bool bHit = GetWorld()->OverlapMultiByProfile(
+	bool bHit = MyWorld->OverlapMultiByProfile(
 		Results,
 		Center,
 		GetActorRotation().Quaternion(),
@@ -218,12 +220,14 @@ void ADMPlayer2P::Attack()
 			IDMDamagedActor* DamagedActor = Cast<IDMDamagedActor>(HitActor);
 			if (DamagedActor)
 			{
+				// Damage
 				DamagedActor->TakeDamage();
+				// Effect
 				if (AttackFlipbookActorClass && AttackFlipbookAsset)
 				{
 					FActorSpawnParameters Params;
 					Params.Owner = this;
-					APaperFlipbookActor* FBActor = World->SpawnActor<APaperFlipbookActor>(AttackFlipbookActorClass, Center, FRotator::ZeroRotator, Params);
+					APaperFlipbookActor* FBActor = MyWorld->SpawnActor<APaperFlipbookActor>(AttackFlipbookActorClass, Center, FRotator::ZeroRotator, Params);
 					if (FBActor)
 					{
 						UPaperFlipbookComponent* FBComp = FBActor->GetRenderComponent();
@@ -232,7 +236,7 @@ void ADMPlayer2P::Attack()
 
 						float Length = FBComp->GetFlipbookLength();
 						FTimerHandle Handle;
-						World->GetTimerManager().SetTimer(Handle, [FBActor]() { FBActor->Destroy(); }, Length, false);
+						MyWorld->GetTimerManager().SetTimer(Handle, [FBActor]() { FBActor->Destroy(); }, Length, false);
 					}
 				}
 			}
@@ -243,7 +247,7 @@ void ADMPlayer2P::Attack()
 void ADMPlayer2P::SetHP(float NewHP)
 {
 	CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
-	//OnHPChanged.Broadcast(CurrentHP);
+	OnHPChanged.Broadcast(CurrentHP/MaxHP);
 	if (CurrentHP <= 0.f)
 	{
 		DMGM->RespawnAtCheckpoint();

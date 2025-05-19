@@ -18,10 +18,7 @@ ADMEnemyActor::ADMEnemyActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//BoxComp->SetBoxExtent(FVector(50.f, 50.f, 50.f)); // 충돌 박스의 크기 설정
-
-	//BoxComp->SetCollisionProfileName(TEXT("Enemy")); // 충돌 프로필 설정
-
+	//FlipbookComponent 생성 및 충돌 프로필 설정
 	FlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComp"));
 	FlipbookComp->SetupAttachment(RootComponent);
 	FlipbookComp->SetCollisionProfileName(TEXT("Enemy"));;
@@ -59,8 +56,7 @@ void ADMEnemyActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CurrentDeltaTime = DeltaTime;
-	Move();
+	Move(DeltaTime);
 }
 
 
@@ -84,6 +80,10 @@ void ADMEnemyActor::TakeDamage()
 	OnEnemyDieAction.Broadcast();
 	OnEnemyDieAction.Clear();
 	Destroy();
+	if (DamageSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
+	}
 }
 
 

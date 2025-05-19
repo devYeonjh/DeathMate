@@ -1,68 +1,48 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/StageSelectWidget.h"
-#include "StageSelectWidget.h"
 #include "Components/Button.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/SaveAndUnlockGame.h"  // ← 여러분이 만든 SaveGame 블루프린트 클래스
 
 void UStageSelectWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // UMG에서 BindWidget한 Stage1Button이 유효하면, OnClicked 델리게이트에 함수 바인딩
-    if (Stage1Button && Stage2Button && Stage3Button)
+    // 1) 저장된 해금 정보 불러오기
+    const FString SlotName = TEXT("SaveAndUnlockGame");
+    USaveAndUnlockGame* DMStageSave = Cast<USaveAndUnlockGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+    if (!DMStageSave)
     {
-        Stage1Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage1Clicked);
-        Stage2Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage2Clicked);
-        Stage3Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage3Clicked);
+        // 없으면 기본값(1)으로 새로 생성 후 저장
+        DMStageSave = Cast<USaveAndUnlockGame>(UGameplayStatics::CreateSaveGameObject(USaveAndUnlockGame::StaticClass()));
+        UGameplayStatics::SaveGameToSlot(DMStageSave, SlotName, 0);
     }
+
+    int32 Highest = DMStageSave->HighestUnlockedStage;  // 몇 번째 스테이지까지 열려 있는지
+
+    // 2) 버튼 잠금/해금 & Lock 이미지 토글
+    Stage1Button->SetIsEnabled(true);                // 스테이지1은 항상 활성
+    Stage2Button->SetIsEnabled(Highest >= 2);
+    Stage3Button->SetIsEnabled(Highest >= 3);
+
+    // 3) 클릭 이벤트 바인딩
+    if (Stage1Button) Stage1Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage1Clicked);
+    if (Stage2Button) Stage2Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage2Clicked);
+    if (Stage3Button) Stage3Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage3Clicked);
 }
 
 void UStageSelectWidget::OnStage1Clicked()
 {
-    RemoveFromParent();
-    if (APlayerController* PC = GetOwningPlayer())
-    {
-        PC->bShowMouseCursor = false;
-        PC->SetInputMode(FInputModeGameOnly());
-    }
-    UGameplayStatics::OpenLevel(
-        GetWorld(),                            // WorldContextObject
-        FName("stage_1"),                      // 로드할 맵 이름
-        /*bAbsolute=*/ true,
-        FString("Game=/Game/Blueprints/BP_DMGameModeBase.BP_DMGameModeBase_C")
-    );
+    // ... (기존에 쓰시던 OpenLevel 코드)
+    UGameplayStatics::OpenLevel(GetWorld(), FName("stage_1"));
 }
 
 void UStageSelectWidget::OnStage2Clicked()
 {
-    RemoveFromParent();
-    if (APlayerController* PC = GetOwningPlayer())
-    {
-        PC->bShowMouseCursor = false;
-        PC->SetInputMode(FInputModeGameOnly());
-    }
-    UGameplayStatics::OpenLevel(
-        GetWorld(),                            // WorldContextObject
-        FName("stage_2"),                      // 로드할 맵 이름
-        /*bAbsolute=*/ true,
-        FString("Game=/Game/Blueprints/BP_DMGameModeBase.BP_DMGameModeBase_C")
-    );
+    UGameplayStatics::OpenLevel(GetWorld(), FName("stage_2"));
 }
 
 void UStageSelectWidget::OnStage3Clicked()
 {
-    RemoveFromParent();
-    if (APlayerController* PC = GetOwningPlayer())
-    {
-        PC->bShowMouseCursor = false;
-        PC->SetInputMode(FInputModeGameOnly());
-    }
-    UGameplayStatics::OpenLevel(
-        GetWorld(),                            // WorldContextObject
-        FName("stage_3"),                      // 로드할 맵 이름
-        /*bAbsolute=*/ true,
-        FString("Game=/Game/Blueprints/BP_DMGameModeBase.BP_DMGameModeBase_C")
-    );
+    UGameplayStatics::OpenLevel(GetWorld(), FName("stage_3"));
 }

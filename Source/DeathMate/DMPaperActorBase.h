@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "DMPaperActorBase.generated.h"
 
+class USceneComponent;
+class UPaperFlipbookComponent;
+class UBoxComponent;
+
 UCLASS()
 class DEATHMATE_API ADMPaperActorBase : public AActor
 {
@@ -16,9 +20,12 @@ public:
 	ADMPaperActorBase();
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USceneComponent* RootScene;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sprite", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UPaperFlipbookComponent> FlipbookComp;
+	TObjectPtr<UPaperFlipbookComponent> FlipbookComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* BoxComp;
+	UBoxComponent* BoxComp;
 };
