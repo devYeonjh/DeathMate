@@ -36,7 +36,7 @@ void ADMSharedController::BeginPlay()
 		}
 	}
 
-	if (HpBarWidgetClass)
+	/*if (HpBarWidgetClass)
 	{
 		// this(PlayerController) 가 WorldContext 역할
 		HpBarWidgetInstance = CreateWidget<UHpBarWidget>(this, HpBarWidgetClass);
@@ -45,7 +45,7 @@ void ADMSharedController::BeginPlay()
 			HpBarWidgetInstance->AddToViewport();
 			// 옵션: ZOrder 지정하려면 AddToViewport(최댓값, ZOrder);
 		}
-	}
+	}*/
 }
 
 

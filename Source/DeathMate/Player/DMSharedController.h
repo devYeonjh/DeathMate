@@ -92,12 +92,12 @@ public:
 	void HandlePause();
 
 
-public:
+/*public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<class UHpBarWidget> HpBarWidgetClass;
 
 private:
 	UPROPERTY()
-	UHpBarWidget* HpBarWidgetInstance;
+	UHpBarWidget* HpBarWidgetInstance;*/
 	
 };

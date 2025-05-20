@@ -1,4 +1,5 @@
 ﻿#include "EndscreenWidget.h"
+#include "StageSelectWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"

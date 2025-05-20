@@ -15,6 +15,11 @@ class DEATHMATE_API USaveAndUnlockGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere) 
+	USaveAndUnlockGame();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, SaveGame)
+	FString SlotName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, SaveGame)
 	int32 HighestUnlockedStage;
 };

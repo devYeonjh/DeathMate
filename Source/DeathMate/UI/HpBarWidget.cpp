@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/HpBarWidget.h"
+/*#include "UI/HpBarWidget.h"
 #include "Components/ProgressBar.h"
 #include "Player/DMPlayer2P.h"
 #include "Utility/DMGameUtilities.h"
@@ -21,3 +21,4 @@ void UHpBarWidget::UpdateHPBar(float NewHpPercent)
 
     HPBar->SetPercent(NewHpPercent);
 }
+*/

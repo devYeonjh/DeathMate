@@ -81,7 +81,7 @@ void ADMPlayer2P::BeginPlay()
 		});
 	}	
 
-	SetHP(MaxHP);
+	/*SetHP(MaxHP);
 	GetWorldTimerManager().SetTimer(
 		HPTimerHandle,
 		[this]()
@@ -90,7 +90,7 @@ void ADMPlayer2P::BeginPlay()
 		},
 		HPDecreaseInterval,
 		true
-	);
+	);*/
 }
 
 //카메라 크기에 맞게이동 제한
@@ -244,7 +244,7 @@ void ADMPlayer2P::Attack()
 	}
 }
 
-void ADMPlayer2P::SetHP(float NewHP)
+/*void ADMPlayer2P::SetHP(float NewHP)
 {
 	CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
 	OnHPChanged.Broadcast(CurrentHP/MaxHP);
@@ -254,3 +254,4 @@ void ADMPlayer2P::SetHP(float NewHP)
 		SetHP(MaxHP);
 	}
 }
+*/

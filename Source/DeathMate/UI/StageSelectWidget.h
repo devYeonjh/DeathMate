@@ -11,6 +11,10 @@ class DEATHMATE_API UStageSelectWidget : public UUserWidget
 {
     GENERATED_BODY()
 
+public:
+    // 블루프린트나 C++에서 마음대로 호출할 수 있게!
+    UFUNCTION(BlueprintCallable, Category = "StageSelect")
+    void RefreshStageButtons();
 protected:
     // 버튼 바인딩
     UPROPERTY(meta = (BindWidget)) UButton* Stage1Button;

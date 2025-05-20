@@ -7,9 +7,17 @@
 void UStageSelectWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+    //클릭 이벤트 바인딩
+    if (Stage1Button) Stage1Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage1Clicked);
+    if (Stage2Button) Stage2Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage2Clicked);
+    if (Stage3Button) Stage3Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage3Clicked);
 
+    RefreshStageButtons();
+}
+void UStageSelectWidget::RefreshStageButtons()
+{
     // 1) 저장된 해금 정보 불러오기
-    const FString SlotName = TEXT("SaveAndUnlockGame");
+    const FString SlotName = TEXT("HighestUnlockedStage");
     USaveAndUnlockGame* DMStageSave = Cast<USaveAndUnlockGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
     if (!DMStageSave)
     {
@@ -19,16 +27,9 @@ void UStageSelectWidget::NativeConstruct()
     }
 
     int32 Highest = DMStageSave->HighestUnlockedStage;  // 몇 번째 스테이지까지 열려 있는지
-
-    // 2) 버튼 잠금/해금 & Lock 이미지 토글
-    Stage1Button->SetIsEnabled(true);                // 스테이지1은 항상 활성
-    Stage2Button->SetIsEnabled(Highest >= 2);
-    Stage3Button->SetIsEnabled(Highest >= 3);
-
-    // 3) 클릭 이벤트 바인딩
-    if (Stage1Button) Stage1Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage1Clicked);
-    if (Stage2Button) Stage2Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage2Clicked);
-    if (Stage3Button) Stage3Button->OnClicked.AddDynamic(this, &UStageSelectWidget::OnStage3Clicked);
+    if (Stage1Button) Stage1Button->SetIsEnabled(true);
+    if (Stage2Button) Stage2Button->SetIsEnabled(Highest >= 2);
+    if (Stage3Button) Stage3Button->SetIsEnabled(Highest >= 3);
 }
 
 void UStageSelectWidget::OnStage1Clicked()

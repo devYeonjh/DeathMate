@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma once
+/*#pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
@@ -8,9 +8,7 @@
 
 class UProgressBar;
 class ADMPlayer2P;
-/**
- * 
- */
+
 UCLASS()
 class DEATHMATE_API UHpBarWidget : public UUserWidget
 {
@@ -27,3 +25,4 @@ private:
 	void UpdateHPBar(float NewHP);
 	
 };
+*/
