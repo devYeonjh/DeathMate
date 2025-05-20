@@ -75,13 +75,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	float DamagePerTick = 1.f;
 
-	/*FTimerHandle HPTimerHandle;*/
+	FTimerHandle HPTimerHandle;
 public:
-	/*void SetHP(float NewHealth);
+	void SetHP(float NewHealth);
 	FORCEINLINE float GetHP() const { return CurrentHP; }
 	FORCEINLINE float GetMaxHP() const { return MaxHP; }
 
-	FOnHPChangedDelegate OnHPChanged;*/
+	FOnHPChangedDelegate OnHPChanged;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	USoundBase* AttackSound;

@@ -43,12 +43,10 @@ void ADMSharedController::BeginPlay()
 
 	if (HpBarWidgetClass)
 	{
-		// this(PlayerController) �� WorldContext ����
 		HpBarWidgetInstance = CreateWidget<UHpBarWidget>(GetWorld(), HpBarWidgetClass);
 		if (HpBarWidgetInstance)
 		{
 			HpBarWidgetInstance->AddToViewport();
-			// �ɼ�: ZOrder �����Ϸ��� AddToViewport(�ִ�, ZOrder);
 		}
 	}
 
