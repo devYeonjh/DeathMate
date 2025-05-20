@@ -52,6 +52,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void Attack();
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void GetSpirit(float Amount) { SetHP(CurrentHP + Amount); }
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Combat|VFX")
 	TSubclassOf<APaperFlipbookActor> AttackFlipbookActorClass;

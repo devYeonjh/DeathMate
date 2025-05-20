@@ -4,12 +4,11 @@
 #include "Enemy/DMEnemyActor.h"
 #include "Enemy/DMEnemyFactory.h"
 #include "Game/DMGameModeBase.h"
-#include "Components/BoxComponent.h"
-#include "Components/StaticMeshComponent.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
-#include "Engine/StaticMeshActor.h"
+#include "Utility/DMGameUtilities.h"
 #include "Player/DMPlayer1P.h"
+#include "Player/DMPlayer2P.h"
 #include "PaperFlipbookComponent.h"
 
 // Sets default values
@@ -78,6 +77,12 @@ void ADMEnemyActor::TakeDamage()
 	OnEnemyDieAction.Broadcast();
 	OnEnemyDieAction.Clear();
 	Destroy();
+	ADMPlayer2P* Player2P = UDMGameUtilities::GetPlayer2P(this);
+	if (Player2P)
+	{
+		Player2P->GetSpirit(SpiritAmount);
+	}
+
 	if (DamageSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
