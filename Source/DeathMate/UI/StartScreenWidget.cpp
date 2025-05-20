@@ -1,4 +1,5 @@
 ﻿#include "StartScreenWidget.h"
+#include "UI/StageSelectWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -35,10 +36,12 @@ void UStartScreenWidget::OnStartClicked()
     // 3) StageSelectWidgetClass로 위젯 생성 후 화면에 추가
     if (StageSelectWidgetClass)
     {
-        UUserWidget* StageSelect = CreateWidget<UUserWidget>(GetWorld(), StageSelectWidgetClass);
+
+        UStageSelectWidget* StageSelect = CreateWidget<UStageSelectWidget>(GetWorld(), StageSelectWidgetClass);
         if (StageSelect)
         {
-            StageSelect->AddToViewport(/*ZOrder=*/ 1);
+            StageSelect->RefreshStageButtons();
+            StageSelect->AddToViewport();
         }
     }
 }

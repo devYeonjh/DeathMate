@@ -23,4 +23,3 @@ void UHpBarWidget::UpdateHPBar(float NewHpPercent)
 	// HPBar의 목표치 설정
     HPBar->SetPercent(NewHpPercent);
 }
-
