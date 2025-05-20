@@ -50,5 +50,7 @@ public:
 private:
 	void RespawnAction(const FVector& Checkpoint);
 
+	bool bTriedBeginPlayPawnSetup = false;
+
 
 };

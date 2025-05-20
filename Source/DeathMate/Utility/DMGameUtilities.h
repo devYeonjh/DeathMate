@@ -22,5 +22,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "DM|Utils")
 	static ADMPlayer2P* GetPlayer2P(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "DM|Utils")
+	static void OpenStage(const UObject* WorldContextObject, const int32 StageNum);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "DM|Utils")
+	static void OpenStartUI(const UObject* WorldContextObject);
 	
 };

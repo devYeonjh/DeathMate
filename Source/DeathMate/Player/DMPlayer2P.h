@@ -13,6 +13,7 @@ class APaperFlipbookActor;
 class ADMFollowingCamera;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHPChangedDelegate, float);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHPChangedDyn, float, NewHP);
 
 /**
  * 
@@ -31,6 +32,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void RespawnAction(const FVector& Checkpoint) override;
+	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 
 private:
 	ADMFollowingCamera* MyCam;
@@ -40,6 +42,9 @@ private:
 
 	UFUNCTION()
 	void OnInputMoveTriggered(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void SetHPTimer() { SetHP(CurrentHP - DamagePerTick); }
 
 private:
 	bool bIsAttacking = false;
@@ -81,7 +86,8 @@ public:
 	FORCEINLINE float GetHP() const { return CurrentHP; }
 	FORCEINLINE float GetMaxHP() const { return MaxHP; }
 
-	FOnHPChangedDelegate OnHPChanged;
+	//FOnHPChangedDelegate OnHPChanged;
+	FOnHPChangedDyn OnHPChanged;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	USoundBase* AttackSound;

@@ -40,6 +40,9 @@ public:
 	virtual void TakeDamage() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
+	void TakeDamageBP() { TakeDamage(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
 	void SetJumpingFinished() { bIsJumping = false; }
 
 	// 데미지 처리 진입점

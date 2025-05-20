@@ -81,17 +81,17 @@ void ADMPlayer2P::BeginPlay()
 		});
 	}	
 
-	/*SetHP(MaxHP);
+	SetHP(MaxHP);
 	GetWorldTimerManager().SetTimer(
 		HPTimerHandle,
-		[this]()
-		{
-			SetHP(CurrentHP - DamagePerTick);
-		},
+		this,
+		&ADMPlayer2P::SetHPTimer,
 		HPDecreaseInterval,
 		true
-	);*/
+	);
 }
+
+
 
 //카메라 크기에 맞게이동 제한
 void ADMPlayer2P::Tick(float DeltaTime)
@@ -245,14 +245,22 @@ void ADMPlayer2P::Attack()
 	}
 }
 
-/*void ADMPlayer2P::SetHP(float NewHP)
+void ADMPlayer2P::SetHP(float NewHP)
 {
 	CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
-	OnHPChanged.Broadcast(CurrentHP/MaxHP);
+	OnHPChanged.Broadcast(CurrentHP / MaxHP);
 	if (CurrentHP <= 0.f)
 	{
 		DMGM->RespawnAtFirstCheckpoint();
 		SetHP(MaxHP);
 	}
+	
 }
-*/
+
+void ADMPlayer2P::EndPlay(const EEndPlayReason::Type Reason)
+{
+	Super::EndPlay(Reason);
+
+	// If you have a multicast FMulticastScriptDelegate:
+	OnHPChanged.Clear();
+}

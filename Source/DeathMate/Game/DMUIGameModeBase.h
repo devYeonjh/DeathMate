@@ -16,6 +16,10 @@ public:
     virtual void BeginPlay() override;
 protected:
     // 여기 StartScreenWidgetClass가 정의되어 있어야
+
+
+
+
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UStartScreenWidget> StartScreenWidgetClass;
 

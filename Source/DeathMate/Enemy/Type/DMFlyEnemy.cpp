@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Game/DMGameModeBase.h"
 
 void ADMFlyEnemy::Move(float DeltaTime)
 {
@@ -37,6 +38,27 @@ void ADMFlyEnemy::Move(float DeltaTime)
 	}
 	// 플레이어가 범위 밖에 있는 경우
 	// 예: 대기 상태 또는 Idle 애니메이션 재생 등
+}
+
+void ADMFlyEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	// 초기 위치 저장
+	StartLocation = GetActorLocation();
+	StartRotation = GetActorRotation();
+
+	ADMGameModeBase* GM = Cast<ADMGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GM)
+	{
+		GM->SpawnCheckPointDelegate.AddUObject(this, &ADMFlyEnemy::ResetPosition);
+	}
+
+}
+
+void ADMFlyEnemy::ResetPosition(const FVector& pos)
+{
+	SetActorLocation(StartLocation);
+	SetActorRotation(StartRotation);
 }
 
 	

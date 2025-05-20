@@ -12,7 +12,8 @@ void UHpBarWidget::NativeConstruct()
     // 플레이어 2P의 OnHPChanged 델리게이트에 바인딩
     if (ADMPlayer2P* Player2P = UDMGameUtilities::GetPlayer2P(this))
     {
-        Player2P->OnHPChanged.AddUObject(this, &UHpBarWidget::UpdateHPBar);
+        //Player2P->OnHPChanged.AddUObject(this, &UHpBarWidget::UpdateHPBar);
+		Player2P->OnHPChanged.AddDynamic(this, &UHpBarWidget::UpdateHPBar);
     }
 }
 
