@@ -55,11 +55,21 @@ void ADMFollowingCamera::BeginPlay()
 		CameraHalfHeight = CameraHalfWidth / CameraComponent->AspectRatio; 
 	}
 
-	if (!TargetActor)
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
-		TargetActor = Cast<AActor>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		if (APawn* Pawn = PC->GetPawn())
+		{
+			TargetActor = Pawn;
+		}
 	}
-	SetActorLocation(TargetActor->GetActorLocation() + FollowOffset);
+	if (TargetActor)
+	{
+		SetActorLocation(TargetActor->GetActorLocation() + FollowOffset);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FollowingCamera: TargetActor가 null입니다. 카메라 위치를 설정할 수 없습니다."));
+	}
 
 
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
@@ -78,6 +88,25 @@ void ADMFollowingCamera::BeginPlay()
 void ADMFollowingCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!bTriedBeginPlayPawnSetup && !TargetActor)
+	{
+		bTriedBeginPlayPawnSetup = true;
+		if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+		{
+			if (APawn* Pawn = PC->GetPawn())
+			{
+				TargetActor = Pawn;
+				SetActorLocation(TargetActor->GetActorLocation() + FollowOffset);
+				UE_LOG(LogTemp, Log, TEXT("FollowingCamera: Tick에서 TargetActor를 재바인딩했습니다."));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("FollowingCamera: Tick 시도에도 Pawn이 없습니다."));
+			}
+		}
+	}
+
 
 	if (!TargetActor) return;
 

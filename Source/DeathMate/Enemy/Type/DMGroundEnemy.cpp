@@ -37,7 +37,7 @@ void ADMGroundEnemy::Move(float DeltaTime)
 
 	// 낙하 확인용 라인 트레이스(바닥 체크)
 	FVector Start = CurrentLocation + FVector(Direction.X * 20.f, 0.f, 0.f); // 앞으로 약간 이동
-	FVector End = Start + FVector(0.f, 0.f, -50.f); // 아래 방향
+	FVector End = Start + FVector(0.f, 0.f, -20.f); // 아래 방향
 
 	FHitResult FloorHit;
 	FCollisionQueryParams Params;

@@ -30,8 +30,37 @@ void ADMGameModeBase::BeginPlay()
 	PlayerStart1P = FindPlayerStart(World, TargetTag1P);
 	PlayerStart2P = FindPlayerStart(World, TargetTag2P);
 
-	SpawnLocalPlayer(SpawnedPlayerIndex++, PlayerStart1P, World);
-	SpawnLocalPlayer(SpawnedPlayerIndex, PlayerStart2P, World);
+	SpawnLocalPlayer(0, PlayerStart1P, World);
+
+	APlayerController* NewPlayer = World->GetFirstPlayerController();
+
+	TArray<AActor*> FoundCams;
+	UGameplayStatics::GetAllActorsOfClass(World, FollowingCameraClass, FoundCams);
+	if (FoundCams.Num() > 0)
+	{
+		return;
+	}
+
+	APawn* Target = NewPlayer->GetPawn();
+
+	if (FollowingCameraClass && NewPlayer)
+	{
+		FActorSpawnParameters Params;
+		Params.Owner = this;
+		MainCamera = GetWorld()->SpawnActor<ADMFollowingCamera>(
+			FollowingCameraClass,
+			FVector::ZeroVector, FRotator(0.f, -90.f, 0.f),
+			Params
+		);
+
+		if (MainCamera)
+		{
+			MainCamera->TargetActor = Target;
+			NewPlayer->SetViewTarget(MainCamera);
+		}
+	}
+
+	SpawnLocalPlayer(1, PlayerStart2P, World);
 
 }
 
@@ -39,7 +68,7 @@ void ADMGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	
-	if (MainCamera)
+	/*if (MainCamera)
 		return;
 
 	UWorld* World = GetWorld();
@@ -71,6 +100,7 @@ void ADMGameModeBase::PostLogin(APlayerController* NewPlayer)
 			NewPlayer->SetViewTarget(MainCamera);
 		}
 	}
+	*/
 }
 
 APlayerStart* ADMGameModeBase::FindPlayerStart(UWorld* World, const FName& TargetTag)
@@ -154,6 +184,7 @@ ADMPlayerBase* ADMGameModeBase::SpawnAndPosessPawn(UWorld* World, APlayerControl
 	if (PlayerIndex == 0)
 	{
 		SetCheckpoint(PlayerStart->GetActorLocation());
+		FirstCheckpoint = PlayerStart->GetActorLocation();
 	}
 
 	return PlayerPawn;
@@ -170,3 +201,9 @@ void ADMGameModeBase::RespawnAtCheckpoint()
 	SpawnCheckPointDelegate.Broadcast(Checkpoint);
 }
 
+//플레이어가 처음 생성된 위치로 리스폰
+void ADMGameModeBase::RespawnAtFirstCheckpoint()
+{
+	SetCheckpoint(FirstCheckpoint);
+	SpawnCheckPointDelegate.Broadcast(FirstCheckpoint);
+}

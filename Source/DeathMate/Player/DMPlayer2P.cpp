@@ -39,6 +39,7 @@ ADMPlayer2P::ADMPlayer2P()
 
 	GetCapsuleComponent()->SetCapsuleRadius(28.f);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(38.f);
+
 }
 
 void ADMPlayer2P::BeginPlay()
@@ -66,6 +67,7 @@ void ADMPlayer2P::BeginPlay()
 		PC->OnInputMoveStarted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = true; });
 		PC->OnInputMoveTriggered2PAction.AddUObject(this, &ADMPlayer2P::OnInputMoveTriggered);
 		PC->OnInputMoveCompleted2PAction.AddLambda([this](const FInputActionValue&)->void { bIsRunning = false; });
+
 		PC->OnInputAttackStarted2PAction.AddLambda([this](const FInputActionValue&)->void {
 			if (!bIsAttacking)
 			{
@@ -82,14 +84,14 @@ void ADMPlayer2P::BeginPlay()
 	SetHP(MaxHP);
 	GetWorldTimerManager().SetTimer(
 		HPTimerHandle,
-		[this]()
-		{
-			SetHP(CurrentHP - DamagePerTick);
-		},
+		this,
+		&ADMPlayer2P::SetHPTimer,
 		HPDecreaseInterval,
 		true
 	);
 }
+
+
 
 //카메라 크기에 맞게이동 제한
 void ADMPlayer2P::Tick(float DeltaTime)
@@ -140,7 +142,8 @@ void ADMPlayer2P::Tick(float DeltaTime)
 			// 지형에 박힌 걸 감지하면 체크포인트로 리스폰
 			if (auto* GM = Cast<ADMGameModeBase>(MyWorld->GetAuthGameMode()))
 			{
-				GM->RespawnAtCheckpoint();  // GameMode에서 브로드캐스트 → ADMPlayer2P::RespawnAction 호출 :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}
+				UE_LOG(LogTemp, Log, TEXT("Overlap Actor: %s"), *(Hit.GetActor()->GetName()));
+				GM->RespawnAtCheckpoint(); 
 			}
 			return;
 		}
@@ -151,7 +154,7 @@ void ADMPlayer2P::Tick(float DeltaTime)
 void ADMPlayer2P::RespawnAction(const FVector& Checkpoint)
 {
 	//TODO : 리스폰 액션 구현
-	FVector Player2POffset = FVector(-200.f, 0.f, 100.f);
+	FVector Player2POffset = FVector(-100.f, 0.f, 100.f);
 	Super::RespawnAction(Checkpoint + Player2POffset);
 	bSkipClamp = true;
 }
@@ -245,10 +248,19 @@ void ADMPlayer2P::Attack()
 void ADMPlayer2P::SetHP(float NewHP)
 {
 	CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
-	//OnHPChanged.Broadcast(CurrentHP);
+	OnHPChanged.Broadcast(CurrentHP / MaxHP);
 	if (CurrentHP <= 0.f)
 	{
-		DMGM->RespawnAtCheckpoint();
+		DMGM->RespawnAtFirstCheckpoint();
 		SetHP(MaxHP);
 	}
+	
+}
+
+void ADMPlayer2P::EndPlay(const EEndPlayReason::Type Reason)
+{
+	Super::EndPlay(Reason);
+
+	// If you have a multicast FMulticastScriptDelegate:
+	OnHPChanged.Clear();
 }

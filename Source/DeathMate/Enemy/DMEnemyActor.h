@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed;
 
+	UPROPERTY(EditAnywhere)
+	float SpiritAmount = 10.f;
+
 	FORCEINLINE void SetMoveSpeed(float NewSpeed) { MoveSpeed = NewSpeed; }
 
 	UFUNCTION()

@@ -9,6 +9,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Player/DMPlayerBase.h"
 
+#include "Blueprint/UserWidget.h"
+#include "UI/HpBarWidget.h"
 
 ADMSharedController::ADMSharedController()
 {
@@ -23,6 +25,11 @@ void ADMSharedController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!IsLocalController())
+	{
+		return;
+	}
+
 	if (PauseMenuClass)
 	{
 		PauseMenuInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
@@ -33,6 +40,16 @@ void ADMSharedController::BeginPlay()
 			PauseMenuInstance->ResumeGame();
 		}
 	}
+
+	if (HpBarWidgetClass)
+	{
+		HpBarWidgetInstance = CreateWidget<UHpBarWidget>(GetWorld(), HpBarWidgetClass);
+		if (HpBarWidgetInstance)
+		{
+			HpBarWidgetInstance->AddToViewport();
+		}
+	}
+
 }
 
 

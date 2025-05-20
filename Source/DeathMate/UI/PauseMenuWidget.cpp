@@ -2,7 +2,7 @@
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
 #include "Components/Image.h"
-#include "Kismet/GameplayStatics.h"
+#include "Utility/DMGameUtilities.h"
 
 void UPauseMenuWidget::NativeConstruct()
 {
@@ -55,5 +55,5 @@ void UPauseMenuWidget::OnContinueClicked()
 void UPauseMenuWidget::OnQuitClicked()
 {
     // StartUI 맵으로 돌아가기
-    UGameplayStatics::OpenLevel(this, TEXT("StartUI"));
+    UDMGameUtilities::OpenStartUI(this);
 }

@@ -18,6 +18,8 @@ void ADMEnemyFactory::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SpawnLocation = GetActorLocation();
+	SpawnRotation = GetActorRotation();
 
 	for (int i = 0; i < MaxSpawnCount; i++)
 	{
@@ -41,7 +43,7 @@ void ADMEnemyFactory::SpawnEnemy()
 		return;
 	}
 
-	ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, GetActorLocation(), GetActorRotation());
+	ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, SpawnLocation, SpawnRotation);
 	if (SpawnedEnemy)
 	{
 		++CurrentAliveEnemyCount;
@@ -82,7 +84,36 @@ void ADMEnemyFactory::EnemyHandleDeath()
 
 void ADMEnemyFactory::SettingEnemy(ADMEnemyActor* SpawnedEnemy)
 {
+	SpawnEnemies.Add(SpawnedEnemy);
+
 	SpawnedEnemy->SetMoveSpeed(MoveSpeed);
 	SpawnedEnemy->OnEnemyDieAction.AddUObject(this, &ADMEnemyFactory::EnemyHandleDeath);
+}
+
+void ADMEnemyFactory::OnPlayerDied()
+{
+	//모든 적 제거
+	for (ADMEnemyActor* Enemy : SpawnEnemies)
+	{
+		if (IsValid(Enemy))
+		{
+			Enemy->Destroy();
+		}
+	}
+	SpawnEnemies.Empty();
+	CurrentAliveEnemyCount = 0;
+
+	// 다시 리스폰
+	for (int32 i = 0; i < MaxSpawnCount; i++)
+	{
+		FVector OffsetLocation = SpawnLocation + SpawnOffset * i;
+		ADMEnemyActor* SpawnedEnemy = GetWorld()->SpawnActor<ADMEnemyActor>(EnemyClass, OffsetLocation, SpawnRotation);
+
+		if (SpawnedEnemy)
+		{
+			++CurrentAliveEnemyCount;
+			SettingEnemy(SpawnedEnemy);
+		}
+	}
 }
 

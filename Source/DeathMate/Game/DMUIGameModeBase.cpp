@@ -18,7 +18,7 @@ void ADMUIGameModeBase::BeginPlay()
                 PC->bEnableClickEvents = true;
                 PC->bEnableMouseOverEvents = true;
 
-                FInputModeUIOnly UIInput;
+                FInputModeGameAndUI  UIInput;
                 UIInput.SetWidgetToFocus(StartScreen->TakeWidget());
                 UIInput.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
                 PC->SetInputMode(UIInput);

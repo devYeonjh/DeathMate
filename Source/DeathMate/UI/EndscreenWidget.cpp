@@ -1,4 +1,5 @@
 ﻿#include "EndscreenWidget.h"
+#include "StageSelectWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -27,8 +28,6 @@ void UEndscreenWidget::NativeConstruct()
 
 void UEndscreenWidget::OnExitClicked()
 {
-    RemoveFromParent();
-
     if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
     {
         PC->bShowMouseCursor = true;
@@ -44,4 +43,6 @@ void UEndscreenWidget::OnExitClicked()
             StartStage->AddToViewport(/*ZOrder=*/ 1);
         }
     }
+
+    RemoveFromParent();
 }

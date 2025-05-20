@@ -1,32 +1,26 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+﻿// HpBarWidget.cpp
 #include "UI/HpBarWidget.h"
-#include "Components/ProgressBar.h"
 #include "Player/DMPlayer2P.h"
-#include "Kismet/GameplayStatics.h"
+#include "Utility/DMGameUtilities.h"
+#include "Components/ProgressBar.h"
+
 
 void UHpBarWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
+    // 플레이어 2P의 OnHPChanged 델리게이트에 바인딩
+    if (ADMPlayer2P* Player2P = UDMGameUtilities::GetPlayer2P(this))
     {
-        if (ADMPlayer2P* P2 = Cast<ADMPlayer2P>(PC->GetPawn()))
-        {
-            Player2P = P2;
-            Player2P->OnHPChanged.AddUObject(this, &UHpBarWidget::UpdateHPBar);
-
-            UpdateHPBar(Player2P->GetHP());
-        }
+        //Player2P->OnHPChanged.AddUObject(this, &UHpBarWidget::UpdateHPBar);
+		Player2P->OnHPChanged.AddDynamic(this, &UHpBarWidget::UpdateHPBar);
     }
 }
 
-void UHpBarWidget::UpdateHPBar(float NewHP)
+void UHpBarWidget::UpdateHPBar(float NewHpPercent)
 {
-    if (!HPBar || !Player2P) return;
-
-    // �ۼ�Ʈ ��� (0~1)
-    const float Percent = NewHP / Player2P->GetMaxHP();
-    HPBar->SetPercent(Percent);
+    if (!HPBar)
+        return;
+	// HPBar의 목표치 설정
+    HPBar->SetPercent(NewHpPercent);
 }
